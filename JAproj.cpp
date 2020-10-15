@@ -39,7 +39,7 @@ void JAproj::on_startAlgorithmButton_clicked()
     }
     else
     {
-        QMessageBox::information(this, tr("ERROR"), "Two dll are chosen, please select only one.");
+        QMessageBox::information(this, tr("ERROR"), "Please choose dll.");
     }
     
 }
