@@ -2,14 +2,14 @@
 #include <qfiledialog.h>
 #include <qmessagebox.h>
 #include <qprogressbar.h>
+#include <qbuttongroup.h>
+
 
 
 JAproj::JAproj(QWidget *parent)
     : QMainWindow(parent)
 {
-    ui.setupUi(this);
-    
-    
+    ui.setupUi(this);   
 }
 
 void JAproj::on_quitButton_clicked()
@@ -25,5 +25,21 @@ void JAproj::on_openButton_clicked()
 
 void JAproj::on_startAlgorithmButton_clicked()
 {
-    close();
+    if (ui.checkBox_cpp->isChecked())
+    {
+        
+    }
+    else if (ui.checkBox_asm->isChecked())
+    {
+        
+    }
+    else if (ui.checkBox_asm->isChecked() && ui.checkBox_cpp->isChecked())
+    {
+        QMessageBox::information(this, tr("ERROR"), "Two dll are chosen, please select only one.");
+    }
+    else
+    {
+        QMessageBox::information(this, tr("ERROR"), "Two dll are chosen, please select only one.");
+    }
+    
 }

@@ -3,7 +3,7 @@
 
 int main(int argc, char *argv[])
 {
-    //cout
+    
     QApplication a(argc, argv);
     JAproj w;
     w.show();
