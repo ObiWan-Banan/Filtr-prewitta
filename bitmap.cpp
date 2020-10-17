@@ -1,8 +1,5 @@
 #include "bitmap.h"
 
-
-
-
 unsigned int get_int(char* data, int offset)
 {
 	int value;
@@ -18,13 +15,13 @@ bitmap::bitmap()
 	width = 0;
 	height = 0;
 	offset_to_pixel_data = 0;
-	imageFilePath = "";
+	
 }
 
 bitmap::bitmap(std::string filePath)
 {
-	imageFilePath = filePath;
-	std::ifstream file(imageFilePath);
+	
+	std::ifstream file(filePath);
 
 	bitmap_header = new char[BMP_HEADER_SIZE];
 	file.read(bitmap_header, BMP_HEADER_SIZE);
