@@ -30,9 +30,6 @@
     <QtUic Include="JAproj.ui">
       <Filter>Resource Files</Filter>
     </QtUic>
-    <QtMoc Include="JAproj.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
     <ClCompile Include="JAproj.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -41,5 +38,18 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="bitmap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="bitmap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="JAproj.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
 </Project>
