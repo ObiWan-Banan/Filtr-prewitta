@@ -25,18 +25,15 @@ void JAproj::on_openButton_clicked()
 
 void JAproj::on_startAlgorithmButton_clicked()
 {
-    if (ui.checkBox_cpp->isChecked())
+
+    if (ui.radioButton_cpp->isChecked())
     {
-        
+    
     }
-    else if (ui.checkBox_asm->isChecked())
+    else if (ui.radioButton_asm->isChecked())
     {
-        
-    }
-    else if (ui.checkBox_asm->isChecked() && ui.checkBox_cpp->isChecked())
-    {
-        QMessageBox::information(this, tr("ERROR"), "Two dll are chosen, please select only one.");
-    }
+
+    }  
     else
     {
         QMessageBox::information(this, tr("ERROR"), "Please choose dll.");
