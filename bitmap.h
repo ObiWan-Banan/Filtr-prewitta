@@ -7,9 +7,9 @@
 #define OFFSET_TO_bfOffBits 10
 #define OFFSET_TO_WIDTH 4
 #define OFFSET_TO_HEIGHT 8
-#define GB 1024*1024*1024
 
 static std::string imageFilePath;
+static int numberOfThreads;
 
 long GetFileSize(std::string filename);
 

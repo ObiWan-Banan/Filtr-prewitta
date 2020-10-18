@@ -10,6 +10,7 @@ JAproj::JAproj(QWidget *parent)
     : QMainWindow(parent)
 {
     ui.setupUi(this);
+    ui.lcdNumber->display(1);
     
     
 }
@@ -30,20 +31,31 @@ void JAproj::on_openButton_clicked()
 void JAproj::on_startAlgorithmButton_clicked()
 {
 
-    bitmap b(imageFilePath);
-    b.saveToFile(imageFilePath);
-    if (ui.radioButton_cpp->isChecked())
+    if (ui.radioButton_cpp->isChecked() || ui.radioButton_asm->isChecked())
     {
-       
-            
-    }
-    else if (ui.radioButton_asm->isChecked())
-    {
+        try {
+            bitmap b(imageFilePath);
+            b.saveToFile(imageFilePath);
+        }
+        catch (...)
+        {
+            QMessageBox::information(this, tr("ERROR"), "Please select file to be opened.");
+        }
+        numberOfThreads = ui.lcdNumber->intValue();
+        if (ui.radioButton_cpp->isChecked())
+        {
 
-    }  
+        }
+        else if (ui.radioButton_asm->isChecked())
+        {
+
+        }
+    }
     else
     {
         QMessageBox::information(this, tr("ERROR"), "Please choose dll.");
     }
+   
+    
     
 }
