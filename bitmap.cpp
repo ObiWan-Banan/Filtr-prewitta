@@ -1,17 +1,17 @@
 #include "bitmap.h"
 
-unsigned int get_int(char* data, int offset)
-{
-	int value;
-	std::memcpy(&value, &data[offset], sizeof(int));
-	return value;
-}
-
 long GetFileSize(std::string filename)
 {
 	struct stat stat_buff;
 	int rc = stat(filename.c_str(), &stat_buff);
 	return rc == 0 ? stat_buff.st_size : -1;
+}
+
+unsigned int get_int(char* data, int offset)
+{
+	int value;
+	std::memcpy(&value, &data[offset], sizeof(int));
+	return value;
 }
 
 bitmap::bitmap()
@@ -29,7 +29,7 @@ bitmap::bitmap()
 bitmap::bitmap(std::string filePath)
 {
 	
-	std::ifstream file(filePath);
+	std::ifstream file(filePath,std::ios::binary);
 	filesize = GetFileSize(filePath);
 
 	bitmap_header = new char[BMP_HEADER_SIZE];
@@ -43,19 +43,19 @@ bitmap::bitmap(std::string filePath)
 	width = get_int(DIB_header, OFFSET_TO_WIDTH);
 	height = get_int(DIB_header, OFFSET_TO_HEIGHT);
 
-	pixel_data = new char[filesize];
-	file.read(pixel_data, filesize);
+	pixel_data = new char[filesize-offset_to_pixel_data];
+	file.read(pixel_data, filesize-offset_to_pixel_data);
 
 }
 
 void bitmap::saveToFile(std::string filePath)
 {
 	std::string imageFilePath = filePath.substr(0, filePath.find('.')) + "NOWY.BMP";
-	std::ofstream file(imageFilePath);
+	std::ofstream file(imageFilePath,std::ios::binary);
 
 	file.write(bitmap_header,BMP_HEADER_SIZE);
 	file.write(DIB_header, (offset_to_pixel_data - BMP_HEADER_SIZE));
-	file.write(pixel_data, filesize);
+	file.write(pixel_data, filesize - offset_to_pixel_data);
 
 
 }

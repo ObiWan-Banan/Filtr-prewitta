@@ -11,9 +11,10 @@
 
 static std::string imageFilePath;
 
+long GetFileSize(std::string filename);
+
 unsigned int get_int(char* data, int offset);
 
-long GetFileSize(std::string filename);
 
 class bitmap
 {
