@@ -13,6 +13,8 @@ static std::string imageFilePath;
 
 unsigned int get_int(char* data, int offset);
 
+long GetFileSize(std::string filename);
+
 class bitmap
 {
 
@@ -22,6 +24,7 @@ class bitmap
 	int width;
 	int height;
 	int offset_to_pixel_data;
+	long filesize;
 	
 
 public:
@@ -29,6 +32,8 @@ public:
 	bitmap();
 	
 	bitmap(std::string filePath);
+
+	void saveToFile(std::string filePath);
 	
 	
 

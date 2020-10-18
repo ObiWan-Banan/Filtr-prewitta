@@ -31,6 +31,7 @@ void JAproj::on_startAlgorithmButton_clicked()
 {
 
     bitmap b(imageFilePath);
+    b.saveToFile(imageFilePath);
     if (ui.radioButton_cpp->isChecked())
     {
        
