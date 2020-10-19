@@ -3,6 +3,7 @@
 #include <qmessagebox.h>
 #include <qprogressbar.h>
 #include <qbuttongroup.h>
+#include <vector>
 
 
 
@@ -34,7 +35,8 @@ void JAproj::on_startAlgorithmButton_clicked()
     if (ui.radioButton_cpp->isChecked() || ui.radioButton_asm->isChecked())
     {
         try {
-            bitmap b(imageFilePath);
+            Bitmap b(imageFilePath);
+            b.makeMagic();
             b.saveToFile(imageFilePath);
         }
         catch (...)
@@ -46,9 +48,8 @@ void JAproj::on_startAlgorithmButton_clicked()
         {
 
         }
-        else if (ui.radioButton_asm->isChecked())
+        else if(ui.radioButton_asm->isChecked())
         {
-
         }
     }
     else

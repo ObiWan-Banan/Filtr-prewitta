@@ -11,12 +11,12 @@
 static std::string imageFilePath;
 static int numberOfThreads;
 
-long GetFileSize(std::string filename);
+unsigned long long GetFileSize(std::string filename);
 
 unsigned int get_int(char* data, int offset);
 
 
-class bitmap
+class Bitmap
 {
 
 	char* bitmap_header;
@@ -25,17 +25,18 @@ class bitmap
 	int width;
 	int height;
 	int offset_to_pixel_data;
-	long filesize;
+	unsigned long long filesize;
 	
 
 public:
 	
-	bitmap();
+	Bitmap();
 	
-	bitmap(std::string filePath);
+	Bitmap(std::string filePath);
 
 	void saveToFile(std::string filePath);
-	
+
+	void makeMagic();
 	
 
 };
