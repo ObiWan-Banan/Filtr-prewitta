@@ -44,22 +44,20 @@ Bitmap::Bitmap(std::string filePath)
 
 	width = get_int(DIB_header, OFFSET_TO_WIDTH);
 	height = get_int(DIB_header, OFFSET_TO_HEIGHT);
-	//padding = (width * 3) % 4;
-	//if (padding) padding = 4 - padding;
+	padding = (width * 3) % 4;
+	if (padding) padding = 4 - padding;
 
 	pixel_data = new  char[filesize - offset_to_pixel_data];
-	//char* temp = new char[padding];
-	//
-	//for (int i = 0; i < height; i++)
-	//{
-	//	file.read(pixel_data, (width*3)*sizeof(char));
-	//	if (padding)
-	//	{
-	//		file.read(temp, padding * sizeof(char));
-	//	}
-	//}
+	char* temp = new char[padding];
 	
-	file.read(pixel_data, filesize-offset_to_pixel_data);
+	for (int i = 0; i < height; i++)
+	{
+		file.read(&pixel_data[i * width * 3], width * 3 * sizeof(char));
+		
+		file.read(temp, padding * sizeof(char));
+	}
+	
+	//file.read(pixel_data, filesize-offset_to_pixel_data);
 
 }
 
@@ -70,23 +68,17 @@ void Bitmap::saveToFile(std::string filePath)
 
 	file.write(bitmap_header,BMP_HEADER_SIZE);
 	file.write(DIB_header, (offset_to_pixel_data - BMP_HEADER_SIZE));
+	//file.write(pixel_data, filesize - offset_to_pixel_data);
+	char* temp = new char[padding];
+	temp[0] = 0;
+	temp[1] = 0;
+	temp[2] = 0;
 
-	//char* temp = new char[padding];
-
-	/*for (int i = 0; i < height; i++)
+	for (int i = 0; i < height; i++)
 	{
-		file.write(pixel_data, (width * 3) * sizeof(char));
-		if (padding)
-		{
-			temp[0] = 0;
-			temp[1] = 0;
-			temp[2] = 0;
-			file.write(temp, padding * sizeof(char));
-		}
-	}*/
-	file.write(pixel_data, filesize - offset_to_pixel_data);
-
-
+		file.write(&pixel_data[i*width *3], width * 3 * sizeof(char));
+		file.write(temp, padding * sizeof(char));
+	}
 }
 
 void Bitmap::makeMagic()
