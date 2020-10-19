@@ -25,6 +25,7 @@ class Bitmap
 	int width;
 	int height;
 	int offset_to_pixel_data;
+	int padding;
 	unsigned long long filesize;
 	
 

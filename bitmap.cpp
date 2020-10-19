@@ -24,6 +24,7 @@ Bitmap::Bitmap()
 	height = 0;
 	offset_to_pixel_data = 0;
 	filesize = 0;
+	padding = 0;
 	
 }
 
@@ -43,8 +44,21 @@ Bitmap::Bitmap(std::string filePath)
 
 	width = get_int(DIB_header, OFFSET_TO_WIDTH);
 	height = get_int(DIB_header, OFFSET_TO_HEIGHT);
+	//padding = (width * 3) % 4;
+	//if (padding) padding = 4 - padding;
 
-	pixel_data = new  char[filesize-offset_to_pixel_data];
+	pixel_data = new  char[filesize - offset_to_pixel_data];
+	//char* temp = new char[padding];
+	//
+	//for (int i = 0; i < height; i++)
+	//{
+	//	file.read(pixel_data, (width*3)*sizeof(char));
+	//	if (padding)
+	//	{
+	//		file.read(temp, padding * sizeof(char));
+	//	}
+	//}
+	
 	file.read(pixel_data, filesize-offset_to_pixel_data);
 
 }
@@ -56,6 +70,20 @@ void Bitmap::saveToFile(std::string filePath)
 
 	file.write(bitmap_header,BMP_HEADER_SIZE);
 	file.write(DIB_header, (offset_to_pixel_data - BMP_HEADER_SIZE));
+
+	//char* temp = new char[padding];
+
+	/*for (int i = 0; i < height; i++)
+	{
+		file.write(pixel_data, (width * 3) * sizeof(char));
+		if (padding)
+		{
+			temp[0] = 0;
+			temp[1] = 0;
+			temp[2] = 0;
+			file.write(temp, padding * sizeof(char));
+		}
+	}*/
 	file.write(pixel_data, filesize - offset_to_pixel_data);
 
 
@@ -118,9 +146,9 @@ void Bitmap::makeMagic()
 					}
 				}
 
-				SUMb = abs(sumXb) + abs(sumYb);
-				SUMg = abs(sumXg) + abs(sumYg);
-				SUMr = abs(sumXr) + abs(sumYr);
+				SUMb = sqrt((sumXb * sumXb) + (sumYb * sumYb));					
+				SUMg = sqrt((sumXg * sumXg) + (sumYg * sumYg));		
+				SUMr = sqrt((sumXr * sumXr) + (sumYr * sumYr));
 			}
 			if (SUMb > 255) SUMb = 255;
 			if (SUMg > 255) SUMg = 255;
