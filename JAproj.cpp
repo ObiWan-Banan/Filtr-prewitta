@@ -24,7 +24,7 @@ void JAproj::on_quitButton_clicked()
 
 void JAproj::on_openButton_clicked()
 {
-    QString filePath = QFileDialog::getOpenFileName(this,tr("Image chooser")," " ,tr("Image Files (*.png *.jpg *.bmp)"));   
+    QString filePath = QFileDialog::getOpenFileName(this,tr("Image chooser")," " ,tr("BMP Files (*.bmp)"));   
     imageFilePath = filePath.toLocal8Bit().constData();
     QMessageBox::information(this, tr("file name"), "Selected file path: "+filePath);
 }
