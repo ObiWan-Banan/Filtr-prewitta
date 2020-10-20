@@ -38,6 +38,8 @@ public:
 	void saveToFile(std::string filePath);
 
 	void makeMagic();
+
+	void grayscale();
 	
 
 };

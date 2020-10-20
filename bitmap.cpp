@@ -159,5 +159,34 @@ void Bitmap::makeMagic()
 		pixel_data[i] = temp[i];
 	}
 	}
+
+void Bitmap::grayscale()
+{
+	int r, g, b;
+	unsigned char gray;
+	for (int i = 0; i < filesize - offset_to_pixel_data; i++)
+	{
+		pixel_data[i] = (unsigned char)pixel_data[i];
+	}
+	for (int i = 0; i < height; i++)
+	{
+		for (int j = 0; j < width; j++)
+		{
+			r = (int)pixel_data[(i * width + j) * 3 + 2];
+			g = (int)pixel_data[(i * width + j) * 3 + 1];
+			b = (int)pixel_data[(i * width + j) * 3 ];
+
+			r = r * 0.299;
+			g = g * 0.587;
+			b = b * 0.144;
+
+			gray =(unsigned char) (r + g + b);
+
+			pixel_data[(i * width + j) * 3] = gray;
+			pixel_data[(i * width + j) * 3+1] = gray;
+			pixel_data[(i * width + j) * 3+2] = gray;
+		}
+	}
+}
 	
 

@@ -36,6 +36,7 @@ void JAproj::on_startAlgorithmButton_clicked()
     {
         try {
             Bitmap b(imageFilePath);
+            b.grayscale();
             b.makeMagic();
             b.saveToFile(imageFilePath);
         }
