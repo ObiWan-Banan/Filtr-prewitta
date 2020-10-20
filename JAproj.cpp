@@ -34,24 +34,31 @@ void JAproj::on_startAlgorithmButton_clicked()
 
     if (ui.radioButton_cpp->isChecked() || ui.radioButton_asm->isChecked())
     {
-        try {
+        try 
+        {
             Bitmap b(imageFilePath);
-            b.grayscale();
-            b.makeMagic();
-            b.saveToFile(imageFilePath);
+            numberOfThreads = ui.lcdNumber->intValue();
+
+            QMessageBox::StandardButton reply;
+            reply = QMessageBox::question(this, "JAproj", "Is loaded bitmap in color?", QMessageBox::Yes | QMessageBox::No);
+            if (reply == QMessageBox::Yes)
+            {
+                b.grayscale();
+            }
+            if (ui.radioButton_cpp->isChecked())
+            {
+                b.makeMagic();
+                b.saveToFile(imageFilePath);
+            }
+            else if (ui.radioButton_asm->isChecked())
+            {
+            }
         }
         catch (...)
         {
             QMessageBox::information(this, tr("ERROR"), "Please select file to be opened.");
         }
-        numberOfThreads = ui.lcdNumber->intValue();
-        if (ui.radioButton_cpp->isChecked())
-        {
-
-        }
-        else if(ui.radioButton_asm->isChecked())
-        {
-        }
+        
     }
     else
     {
