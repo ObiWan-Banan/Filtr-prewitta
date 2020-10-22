@@ -2,7 +2,8 @@
 
 #include <QtWidgets/QMainWindow>
 #include "ui_JAproj.h"
-#include"bitmap.h"
+#include "bitmap.h"
+#include "histogram.h"
 
 
 class JAproj : public QMainWindow

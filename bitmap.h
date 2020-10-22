@@ -11,7 +11,7 @@
 static std::string imageFilePath;
 static int numberOfThreads;
 
-unsigned long long GetFileSize(std::string filename);
+long GetFileSize(std::string filename);
 
 unsigned int get_int(char* data, int offset);
 
@@ -26,7 +26,7 @@ class Bitmap
 	int height;
 	int offset_to_pixel_data;
 	int padding;
-	unsigned long long filesize;
+	long filesize;
 	
 
 public:
@@ -35,11 +35,27 @@ public:
 	
 	Bitmap(std::string filePath);
 
+	void castPixelCharArrayToUnsignedCharArray();
+
+	int getWidth();
+
+	int getHeight();
+
+	char* getPixels();
+
+	int getOffsetToPixels();
+
+	long getFilesize();
+
 	void saveToFile(std::string filePath);
 
 	void makeMagic();
 
 	void grayscale();
+
+	void calculateHistogram();
+
+	void saveHistogram(unsigned char r[], unsigned char g[], unsigned char b[]);
 	
 
 };

@@ -47,8 +47,9 @@ void JAproj::on_startAlgorithmButton_clicked()
             }
             if (ui.radioButton_cpp->isChecked())
             {
-                b.makeMagic();
-                b.saveToFile(imageFilePath);
+                b.castPixelCharArrayToUnsignedCharArray();
+               // b.makeMagic();
+               b.saveToFile(imageFilePath);
             }
             else if (ui.radioButton_asm->isChecked())
             {

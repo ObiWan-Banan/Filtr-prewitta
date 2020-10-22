@@ -108,11 +108,13 @@
     <QtUic Include="JAproj.ui" />
     <QtMoc Include="JAproj.h" />
     <ClCompile Include="bitmap.cpp" />
+    <ClCompile Include="histogram.cpp" />
     <ClCompile Include="JAproj.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bitmap.h" />
+    <ClInclude Include="histogram.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

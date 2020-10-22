@@ -1,7 +1,7 @@
 #include "bitmap.h"
 #include<vector>
 
-unsigned long long GetFileSize(std::string filename)
+long GetFileSize(std::string filename)
 {
 	struct stat stat_buff;
 	int rc = stat(filename.c_str(), &stat_buff);
@@ -61,6 +61,24 @@ Bitmap::Bitmap(std::string filePath)
 
 }
 
+void Bitmap::castPixelCharArrayToUnsignedCharArray()
+{
+	for (int i = 0; i < filesize - offset_to_pixel_data; i++)
+	{
+		pixel_data[i] = (unsigned char)pixel_data[i];
+	}
+}
+
+int Bitmap::getWidth() { return width; }
+
+int Bitmap::getHeight() { return height; }
+
+char* Bitmap::getPixels() { return pixel_data; }
+
+int Bitmap::getOffsetToPixels() { return offset_to_pixel_data; }
+
+long Bitmap::getFilesize() { return filesize; }
+
 void Bitmap::saveToFile(std::string filePath)
 {
 	std::string imageFilePath = filePath.substr(0, filePath.find('.')) + "NOWY.BMP";
@@ -83,10 +101,10 @@ void Bitmap::saveToFile(std::string filePath)
 
 void Bitmap::makeMagic()
 {
-	for (int i = 0; i < filesize - offset_to_pixel_data; i++)
+	/*for (int i = 0; i < filesize - offset_to_pixel_data; i++)
 	{
 		pixel_data[i] = (unsigned char)pixel_data[i];
-	}
+	}*/
 	unsigned char* temp = new unsigned char[filesize - offset_to_pixel_data];
 	for (int i = 0; i < filesize - offset_to_pixel_data; i++)
 	{
@@ -119,7 +137,7 @@ void Bitmap::makeMagic()
 				SUMb = 0; SUMg = 0; SUMr = 0;
 			}
 			else if (X == 0 || X == width - 1) {
-				SUMb = 0; SUMg = 0; SUMr = 0;
+				SUMb = 0; SUMg = 0; SUMr = 0;	
 			}
 			else
 			{
@@ -164,10 +182,10 @@ void Bitmap::grayscale()
 {
 	int r, g, b;
 	unsigned char gray;
-	for (int i = 0; i < filesize - offset_to_pixel_data; i++)
+	/*for (int i = 0; i < filesize - offset_to_pixel_data; i++)
 	{
 		pixel_data[i] = (unsigned char)pixel_data[i];
-	}
+	}*/
 	for (int i = 0; i < height; i++)
 	{
 		for (int j = 0; j < width; j++)
@@ -185,6 +203,38 @@ void Bitmap::grayscale()
 			pixel_data[(i * width + j) * 3] = gray;
 			pixel_data[(i * width + j) * 3+1] = gray;
 			pixel_data[(i * width + j) * 3+2] = gray;
+		}
+	}
+}
+
+void Bitmap::calculateHistogram()
+{
+	int r[256];
+	int g[256];
+	int b[256];
+	for (int i = 0; i < filesize - offset_to_pixel_data; i++)
+	{
+		pixel_data[i] = (unsigned char)pixel_data[i];
+	}
+	for (int i = 0; i < height; i++)
+	{
+		for (int j = 0; j < width; j++)
+		{
+			int rValue = (int)pixel_data[(i * width + j) * 3+2];
+			int gValue = (int)pixel_data[(i * width + j) * 3 + 1];
+			int bValue = (int)pixel_data[(i * width + j) * 3];
+
+			if (rValue > 255) rValue = 255;
+			if (rValue < 0) rValue = 0;
+			if (gValue > 255) rValue = 255;
+			if (gValue < 0) rValue = 0;
+			if (bValue > 255) rValue = 255;
+			if (bValue < 0) rValue = 0;
+			
+
+			b[bValue]++;
+			g[gValue]++;
+			r[rValue]++;
 		}
 	}
 }
