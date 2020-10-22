@@ -49,9 +49,9 @@ void JAproj::on_startAlgorithmButton_clicked()
             }
             if (ui.radioButton_cpp->isChecked())
             {
+                b.castPixelCharArrayToUnsignedCharArray();
                 h.calculateHistogram(b);
                h.saveHistogram(imageFilePath);
-                b.castPixelCharArrayToUnsignedCharArray();
                 b.makeMagic();
                b.saveToFile(imageFilePath);
             }

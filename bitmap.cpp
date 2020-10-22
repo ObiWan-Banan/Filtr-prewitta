@@ -105,10 +105,7 @@ void Bitmap::saveToFile(std::string filePath)
 
 void Bitmap::makeMagic()
 {
-	/*for (int i = 0; i < filesize - offset_to_pixel_data; i++)
-	{
-		pixel_data[i] = (unsigned char)pixel_data[i];
-	}*/
+	
 	unsigned char* temp = new unsigned char[filesize - offset_to_pixel_data];
 	for (int i = 0; i < filesize - offset_to_pixel_data; i++)
 	{
@@ -147,16 +144,16 @@ void Bitmap::makeMagic()
 			{
 				for (int I = -1; I <= 1; I++) {
 					for (int J = -1; J <= 1; J++) {
-						sumXb = sumXb + pixel_data[3*(X+I+(Y+J)*width)] * kernel[I + 1][J + 1];
-						sumXg = sumXg + pixel_data[3*(X + I + (Y + J) * width)+1] * kernel[I + 1][J + 1];
-						sumXr = sumXr + pixel_data[3*(X + I + (Y + J) * width)+2] * kernel[I + 1][J + 1];
+						sumXb += pixel_data[3*(X+I+(Y+J)*width)] * kernel[I + 1][J + 1];
+						sumXg += pixel_data[3*(X + I + (Y + J) * width)+1] * kernel[I + 1][J + 1];
+						sumXr += pixel_data[3*(X + I + (Y + J) * width)+2] * kernel[I + 1][J + 1];
 					}
 				}
 				for (int I = -1; I <= 1; I++) {
 					for (int J = -1; J <= 1; J++) {
-						sumYb = sumYb + pixel_data[3*(X + I + (Y + J) * width)] * kernely[I + 1][J + 1];
-						sumYg = sumYg + pixel_data[3*(X + I + (Y + J) * width)+1] * kernely[I + 1][J + 1];
-						sumYr = sumYr + pixel_data[3*(X + I + (Y + J) * width)+2] * kernely[I + 1][J + 1];
+						sumYb += pixel_data[3*(X + I + (Y + J) * width)] * kernely[I + 1][J + 1];
+						sumYg += pixel_data[3*(X + I + (Y + J) * width)+1] * kernely[I + 1][J + 1];
+						sumYr += pixel_data[3*(X + I + (Y + J) * width)+2] * kernely[I + 1][J + 1];
 					}
 				}
 
@@ -186,10 +183,7 @@ void Bitmap::grayscale()
 {
 	int r, g, b;
 	unsigned char gray;
-	/*for (int i = 0; i < filesize - offset_to_pixel_data; i++)
-	{
-		pixel_data[i] = (unsigned char)pixel_data[i];
-	}*/
+	
 	for (int i = 0; i < height; i++)
 	{
 		for (int j = 0; j < width; j++)
@@ -241,6 +235,11 @@ void Bitmap::calculateHistogram()
 			r[rValue]++;
 		}
 	}
+}
+
+void Bitmap::setPixels(char* newPixels)
+{
+	pixel_data = newPixels;
 }
 	
 

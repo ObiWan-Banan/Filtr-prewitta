@@ -58,6 +58,8 @@ public:
 	void grayscale();
 
 	void calculateHistogram();
+
+	void setPixels(char* newPixels);
 	
 
 };
