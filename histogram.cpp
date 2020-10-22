@@ -3,6 +3,9 @@
 Histogram::Histogram(Bitmap bitmap)
 {
 	background = bitmap;
+	rDistribution = new int[256];
+	gDistribution = new int[256];
+	bDistribution = new int[256];
 	for (int i = 0; i < 256; i++)
 	{
 		rDistribution[i] = 0;
@@ -18,7 +21,6 @@ void Histogram::calculateHistogram()
 	{
 		for (int j = 0; j < background.getWidth(); j++)
 		{
-			int rValue = (int)temp_pixel_data[(i * background.getWidth() + j) * 3 + 2];
 			int rValue = (int)temp_pixel_data[(i * background.getWidth() + j) * 3 + 2];
 			int gValue = (int)temp_pixel_data[(i * background.getWidth() + j) * 3 + 1];
 			int bValue = (int)temp_pixel_data[(i * background.getWidth() + j) * 3];

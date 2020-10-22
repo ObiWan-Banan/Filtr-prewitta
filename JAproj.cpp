@@ -38,6 +38,7 @@ void JAproj::on_startAlgorithmButton_clicked()
         {
             Bitmap b(imageFilePath);
             numberOfThreads = ui.lcdNumber->intValue();
+            Histogram h(b);
 
             QMessageBox::StandardButton reply;
             reply = QMessageBox::question(this, "JAproj", "Is loaded bitmap in color?", QMessageBox::Yes | QMessageBox::No);
@@ -47,8 +48,9 @@ void JAproj::on_startAlgorithmButton_clicked()
             }
             if (ui.radioButton_cpp->isChecked())
             {
+                h.calculateHistogram();
                 b.castPixelCharArrayToUnsignedCharArray();
-               // b.makeMagic();
+                b.makeMagic();
                b.saveToFile(imageFilePath);
             }
             else if (ui.radioButton_asm->isChecked())
