@@ -32,6 +32,13 @@ void Histogram::calculateHistogram(Bitmap b)
 	}
 }
 
-void Histogram::saveHistogram()
+void Histogram::saveHistogram(std::string FilePath)
 {
+	std::size_t found = FilePath.find_last_of("/\\");
+	std::string filepath = FilePath.substr(0, found) + "/preHistogram.bmp";
+	std::ofstream file(FilePath, std::ios::binary);
+
+	file.write(this->background->getBitmap_header(), BMP_HEADER_SIZE);
+	file.write(this->background->getDIB_header(), background->getOffsetToPixels() - BMP_HEADER_SIZE);
+	//TO DO MODIFY BACKGROUND PIXEL TABLE AND SAVE IT TO FILE
 }

@@ -37,6 +37,10 @@ public:
 
 	void castPixelCharArrayToUnsignedCharArray();
 
+	char* getBitmap_header();
+
+	char* getDIB_header();
+
 	int getWidth();
 
 	int getHeight();

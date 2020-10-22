@@ -69,6 +69,10 @@ void Bitmap::castPixelCharArrayToUnsignedCharArray()
 	}
 }
 
+char* Bitmap::getBitmap_header() { return bitmap_header; }
+
+char* Bitmap::getDIB_header() { return DIB_header; }
+
 int Bitmap::getWidth() { return width; }
 
 int Bitmap::getHeight() { return height; }

@@ -13,6 +13,6 @@ public:
 
 	void calculateHistogram(Bitmap b);
 
-	void saveHistogram();
+	void saveHistogram(std::string imageFilePath);
 };
 
