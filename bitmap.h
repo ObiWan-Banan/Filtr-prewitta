@@ -54,8 +54,6 @@ public:
 	void grayscale();
 
 	void calculateHistogram();
-
-	void saveHistogram(unsigned char r[], unsigned char g[], unsigned char b[]);
 	
 
 };

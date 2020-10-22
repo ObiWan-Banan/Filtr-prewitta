@@ -2,7 +2,7 @@
 
 Histogram::Histogram(Bitmap bitmap)
 {
-	background = bitmap;
+	background = &bitmap;
 	rDistribution = new int[256];
 	gDistribution = new int[256];
 	bDistribution = new int[256];
@@ -14,24 +14,16 @@ Histogram::Histogram(Bitmap bitmap)
 	}
 }
 
-void Histogram::calculateHistogram()
+void Histogram::calculateHistogram(Bitmap b)
 {
-	char* temp_pixel_data = background.getPixels();
-	for (int i = 0; i < background.getHeight(); i++)
+	char* temp_pixel_data = b.getPixels();
+	for (int i = 0; i < b.getHeight(); i++)
 	{
-		for (int j = 0; j < background.getWidth(); j++)
+		for (int j = 0; j < b.getWidth(); j++)
 		{
-			int rValue = (int)temp_pixel_data[(i * background.getWidth() + j) * 3 + 2];
-			int gValue = (int)temp_pixel_data[(i * background.getWidth() + j) * 3 + 1];
-			int bValue = (int)temp_pixel_data[(i * background.getWidth() + j) * 3];
-
-			if (rValue > 255) rValue = 255;
-			if (rValue < 0) rValue = 0;
-			if (gValue > 255) rValue = 255;
-			if (gValue < 0) rValue = 0;
-			if (bValue > 255) rValue = 255;
-			if (bValue < 0) rValue = 0;
-
+			int rValue = (int)temp_pixel_data[(i * b.getWidth() + j) * 3 + 2];
+			int gValue = (int)temp_pixel_data[(i * b.getWidth() + j) * 3 + 1];
+			int bValue = (int)temp_pixel_data[(i * b.getWidth() + j) * 3];
 
 			bDistribution[bValue]++;
 			gDistribution[gValue]++;

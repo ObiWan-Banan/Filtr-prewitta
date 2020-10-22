@@ -11,9 +11,7 @@ JAproj::JAproj(QWidget *parent)
     : QMainWindow(parent)
 {
     ui.setupUi(this);
-    ui.lcdNumber->display(1);
-    
-    
+    ui.lcdNumber->display(1); 
 }
 
 void JAproj::on_quitButton_clicked()
@@ -34,11 +32,13 @@ void JAproj::on_startAlgorithmButton_clicked()
 
     if (ui.radioButton_cpp->isChecked() || ui.radioButton_asm->isChecked())
     {
+        Bitmap background("background.BMP");
         try 
         {
             Bitmap b(imageFilePath);
+           // Bitmap background("background.BMP");
             numberOfThreads = ui.lcdNumber->intValue();
-            Histogram h(b);
+            Histogram h(background);
 
             QMessageBox::StandardButton reply;
             reply = QMessageBox::question(this, "JAproj", "Is loaded bitmap in color?", QMessageBox::Yes | QMessageBox::No);
@@ -48,7 +48,7 @@ void JAproj::on_startAlgorithmButton_clicked()
             }
             if (ui.radioButton_cpp->isChecked())
             {
-                h.calculateHistogram();
+                h.calculateHistogram(b);
                 b.castPixelCharArrayToUnsignedCharArray();
                 b.makeMagic();
                b.saveToFile(imageFilePath);

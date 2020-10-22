@@ -3,7 +3,7 @@
 #include "bitmap.h"
 class Histogram
 {
-	Bitmap background;
+	Bitmap* background;
 	int* rDistribution;
 	int* bDistribution;
 	int* gDistribution;
@@ -11,7 +11,7 @@ class Histogram
 public:
 	Histogram(Bitmap b);
 
-	void calculateHistogram();
+	void calculateHistogram(Bitmap b);
 
 	void saveHistogram();
 };
