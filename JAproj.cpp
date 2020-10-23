@@ -12,6 +12,7 @@ JAproj::JAproj(QWidget *parent)
 {
     ui.setupUi(this);
     ui.lcdNumber->display(1); 
+    ui.radioButton_cpp->setChecked(true);
 }
 
 void JAproj::on_quitButton_clicked()
@@ -51,6 +52,7 @@ void JAproj::on_startAlgorithmButton_clicked()
             {
                 b.castPixelCharArrayToUnsignedCharArray();
                 h.calculateHistogram(b);
+                h.normalizeDistributions();
                h.saveHistogram(imageFilePath);
                 b.makeMagic();
                b.saveToFile(imageFilePath);

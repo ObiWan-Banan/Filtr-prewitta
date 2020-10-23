@@ -16,22 +16,25 @@ Histogram::Histogram(Bitmap bitmap)
 
 void Histogram::calculateHistogram(Bitmap b)
 {
-	char* temp_pixel_data = b.getPixels();
-	int yyy = b.getHeight();
-	int xxx = b.getWidth();
-	for (int i = 0; i < yyy; i++)
-	{
-		for (int j = 0; j < xxx; j++)
-		{
-			int rValue = (int)temp_pixel_data[3*(i * b.getWidth() + j)  + 2];
+	/*int rValue = (int)temp_pixel_data[3*(i * b.getWidth() + j)  + 2];
 			int gValue = (int)temp_pixel_data[3*(i * b.getWidth() + j)  + 1];
-			int bValue = (int)temp_pixel_data[3*(i * b.getWidth() + j) ];
+			int bValue = (int)temp_pixel_data[3*(i * b.getWidth() + j) ];*/
+	char* temp_pixel_data = b.getPixels();
+	for (int i = 0; i < b.getHeight(); i++)
+	{
+		for (int j = 0; j < b.getWidth(); j++)
+		{
+			
+			int rValue = (int)*(temp_pixel_data + j + i * b.getWidth() +2);
+			int gValue = (int)*(temp_pixel_data + j + i * b.getWidth() +1);
+			int bValue = (int)*(temp_pixel_data + j + i * b.getWidth() );
 
 			bDistribution[bValue]++;
 			gDistribution[gValue]++;
 			rDistribution[rValue]++;
 		}
 	}
+
 }
 
 void Histogram::saveHistogram(std::string FilePath)
@@ -43,27 +46,48 @@ void Histogram::saveHistogram(std::string FilePath)
 	file.write(this->background->getBitmap_header(), BMP_HEADER_SIZE);
 	file.write(this->background->getDIB_header(), background->getOffsetToPixels() - BMP_HEADER_SIZE);
 	//TO DO MODIFY BACKGROUND PIXEL TABLE AND SAVE IT TO FILE
-	int histogramWidth = 256;
+	int histogramWidth = background->getWidth();
 	background->castPixelCharArrayToUnsignedCharArray();
 	char* temp = background->getPixels();
 	for (int i = 0; i < histogramWidth; i++) 
 	{
+		
 		int rColumnHeight = rDistribution[i];
 		for (int j = 0; j < rColumnHeight; j++)
 		{
-			temp[3 * (i * background->getWidth() + j) + 2] = 255;
+			temp[3 * (j * histogramWidth ) + 2] = 255;
 		}
-		int bColumnHeight = bDistribution[i];
+		/*int bColumnHeight = bDistribution[i];
 		for (int j = 0; j < bColumnHeight; j++)
 		{
-			temp[3 * (i * background->getWidth() + j) ] = 255;
+			temp[3 * (j * background->getWidth() + i) ] = 255;
 		}
 		int gColumnHeight = gDistribution[i];
 		for (int j = 0; j < bColumnHeight; j++)
 		{
-			temp[3 * (i * background->getWidth() + j)+1] = 255;
-		}
+			temp[3 * (j * background->getWidth() + i)+1] = 255;
+		}*/
 	}
 	background->setPixels(temp);
 	file.write(background->getPixels(), background->getFilesize()-background->getOffsetToPixels());
+}
+
+void Histogram::normalizeDistributions()
+{
+	int rMax = 0;
+	int gMax = 0;
+	int bMax = 0;
+	int desiredMaximum = 300;
+	for (int i = 0; i < 256; i++)
+	{
+		if (rDistribution[i] > rMax) rMax = rDistribution[i];
+		if (gDistribution[i] > gMax) gMax = gDistribution[i];
+		if (bDistribution[i] > bMax) bMax = bDistribution[i];
+	}
+	for (int j = 0; j < 256; j++)
+	{
+		rDistribution[j]=(rDistribution[j] * desiredMaximum) / rMax;
+		gDistribution[j]=(gDistribution[j] * desiredMaximum) / gMax;
+		bDistribution[j]=(bDistribution[j] * desiredMaximum) / bMax;
+	}
 }

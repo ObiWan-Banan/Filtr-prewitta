@@ -14,5 +14,7 @@ public:
 	void calculateHistogram(Bitmap b);
 
 	void saveHistogram(std::string imageFilePath);
+
+	void normalizeDistributions();
 };
 
