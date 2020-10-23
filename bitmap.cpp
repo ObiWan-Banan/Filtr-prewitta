@@ -241,5 +241,7 @@ void Bitmap::setPixels(char* newPixels)
 {
 	pixel_data = newPixels;
 }
+
+
 	
 

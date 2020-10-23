@@ -60,6 +60,7 @@ public:
 	void calculateHistogram();
 
 	void setPixels(char* newPixels);
+
 	
 
 };

@@ -52,8 +52,7 @@ void JAproj::on_startAlgorithmButton_clicked()
             {
                 b.castPixelCharArrayToUnsignedCharArray();
                 h.calculateHistogram(b);
-                h.normalizeDistributions();
-               h.saveHistogram(imageFilePath);
+               //h.saveHistogram(imageFilePath);
                 b.makeMagic();
                b.saveToFile(imageFilePath);
             }
