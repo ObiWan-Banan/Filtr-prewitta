@@ -2,6 +2,7 @@
 #include<iostream>
 #include<fstream>
 #include<memory>
+#include<qvector.h>
 #include <QtCore\qstring.h>
 #define BMP_HEADER_SIZE 14
 #define OFFSET_TO_bfOffBits 10
@@ -27,6 +28,9 @@ class Bitmap
 	int offset_to_pixel_data;
 	int padding;
 	long filesize;
+	std::vector<int> rDistribution;
+	std::vector<int> gDistribution;
+	std::vector<int> bDistribution;
 	
 
 public:
@@ -34,6 +38,10 @@ public:
 	Bitmap();
 	
 	Bitmap(std::string filePath);
+
+	void calculateHistogram();
+
+	void normalizeHistogram();
 
 	void castPixelCharArrayToUnsignedCharArray();
 
@@ -56,8 +64,6 @@ public:
 	void makeMagic();
 
 	void grayscale();
-
-	void calculateHistogram();
 
 	void setPixels(char* newPixels);
 

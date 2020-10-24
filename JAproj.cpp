@@ -39,7 +39,7 @@ void JAproj::on_startAlgorithmButton_clicked()
             Bitmap b(imageFilePath);
             Bitmap background("background.BMP");
             numberOfThreads = ui.lcdNumber->intValue();
-            Histogram h(background);
+           // Histogram h(background);
            
 
             QMessageBox::StandardButton reply;
@@ -51,8 +51,9 @@ void JAproj::on_startAlgorithmButton_clicked()
             if (ui.radioButton_cpp->isChecked())
             {
                 b.castPixelCharArrayToUnsignedCharArray();
-                h.calculateHistogram(b);
+               // h.calculateHistogram(b);
                //h.saveHistogram(imageFilePath);
+                b.calculateHistogram();
                 b.makeMagic();
                b.saveToFile(imageFilePath);
             }

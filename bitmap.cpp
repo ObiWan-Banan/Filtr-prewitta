@@ -25,12 +25,19 @@ Bitmap::Bitmap()
 	offset_to_pixel_data = 0;
 	filesize = 0;
 	padding = 0;
+	rDistribution.resize(256);
+	gDistribution.resize(256);
+	bDistribution.resize(256);
 	
 }
 
 Bitmap::Bitmap(std::string filePath)
 {
 	
+	rDistribution.resize(256);
+	gDistribution.resize(256);
+	bDistribution.resize(256);
+
 	std::ifstream file(filePath,std::ios::binary);
 	filesize = GetFileSize(filePath);
 
@@ -59,6 +66,47 @@ Bitmap::Bitmap(std::string filePath)
 	
 	//file.read(pixel_data, filesize-offset_to_pixel_data);
 
+}
+
+void Bitmap::calculateHistogram()
+{
+	
+	int pixelCount = 3 * width * height;
+	unsigned char* temp = new unsigned char[filesize - offset_to_pixel_data];
+	for (int i = 0; i < filesize - offset_to_pixel_data; i++)
+	{
+		temp[i] = pixel_data[i];
+	}
+	for (int i = 0; i < pixelCount; i += 3)
+	{
+		bDistribution[temp[i]]++;
+		gDistribution[temp[i + 1]]++;
+		rDistribution[temp[i + 2]]++;
+	}
+
+	normalizeHistogram();
+
+	
+}
+
+void Bitmap::normalizeHistogram()
+{
+	int rMax = 0;
+	int gMax = 0;
+	int bMax = 0;
+	int desiredMaximum = 300;
+	for (int i = 0; i < 256; i++)
+	{
+		if (rDistribution[i] > rMax) rMax = rDistribution[i];
+		if (gDistribution[i] > gMax) gMax = gDistribution[i];
+		if (bDistribution[i] > bMax) bMax = bDistribution[i];
+	}
+	for (int j = 0; j < 256; j++)
+	{
+		rDistribution[j] = (rDistribution[j] * desiredMaximum) / rMax;
+		gDistribution[j] = (gDistribution[j] * desiredMaximum) / gMax;
+		bDistribution[j] = (bDistribution[j] * desiredMaximum) / bMax;
+	}
 }
 
 void Bitmap::castPixelCharArrayToUnsignedCharArray()
@@ -205,37 +253,7 @@ void Bitmap::grayscale()
 	}
 }
 
-void Bitmap::calculateHistogram()
-{
-	int r[256];
-	int g[256];
-	int b[256];
-	for (int i = 0; i < filesize - offset_to_pixel_data; i++)
-	{
-		pixel_data[i] = (unsigned char)pixel_data[i];
-	}
-	for (int i = 0; i < height; i++)
-	{
-		for (int j = 0; j < width; j++)
-		{
-			int rValue = (int)pixel_data[(i * width + j) * 3+2];
-			int gValue = (int)pixel_data[(i * width + j) * 3 + 1];
-			int bValue = (int)pixel_data[(i * width + j) * 3];
 
-			if (rValue > 255) rValue = 255;
-			if (rValue < 0) rValue = 0;
-			if (gValue > 255) rValue = 255;
-			if (gValue < 0) rValue = 0;
-			if (bValue > 255) rValue = 255;
-			if (bValue < 0) rValue = 0;
-			
-
-			b[bValue]++;
-			g[gValue]++;
-			r[rValue]++;
-		}
-	}
-}
 
 void Bitmap::setPixels(char* newPixels)
 {

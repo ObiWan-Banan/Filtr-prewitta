@@ -9,11 +9,11 @@ class Histogram
 	int gDistribution[256];
 
 public:
-	Histogram(Bitmap b);
+	Histogram(Bitmap &b);
 
 	void normalizeDistributions();
 
-	void calculateHistogram(Bitmap b);
+	void calculateHistogram(Bitmap &b);
 
 	void saveHistogram(std::string imageFilePath);
 

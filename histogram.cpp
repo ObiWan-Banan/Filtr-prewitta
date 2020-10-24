@@ -1,6 +1,7 @@
 #include "histogram.h"
+#include<vector>
 
-Histogram::Histogram(Bitmap bitmap)
+Histogram::Histogram(Bitmap &bitmap)
 {
 	background = &bitmap;
 
@@ -32,31 +33,42 @@ void Histogram::normalizeDistributions()
 	}
 }
 
-void Histogram::calculateHistogram(Bitmap b)
+void Histogram::calculateHistogram(Bitmap &b)
 {
-	/*int rValue = (int)*(temp_pixel_data + x + y * b.getWidth() + 2);
-	int gValue = (int)*(temp_pixel_data + x + y * b.getWidth() + 1);
-	int bValue = (int)*(temp_pixel_data + x + y * b.getWidth());*/
+	
 
+	
+	int height = b.getHeight();
+	int width = b.getWidth();
 	char* temp_pixel_data = b.getPixels();
-	/*for (int i = 0; i < background->getFilesize() - background->getOffsetToPixels(); i++)
-	{
-		temp_pixel_data[i] = (unsigned char)temp_pixel_data;
-	}*/
-	for (int y = 0; y < b.getHeight(); y++)
-	{
-		for (int x = 0; x < b.getWidth(); x++)
-		{
-			
-			int rValue = (int)temp_pixel_data[3*(y * b.getWidth() + x)  + 2];
-			int gValue = (int)temp_pixel_data[3*(y * b.getWidth() + x)  + 1];
-			int bValue = (int)temp_pixel_data[3*(y * b.getWidth() + x) ];
-			
+	
+	//for (int y = 0; y <height; y++)
+	//{
+	//	for (int x = 0; x < width; x++)
+	//	{/*
+	//		int rValue = (int)*(temp_pixel_data + x + y * width + 2);
+	//		int gValue = (int)*(temp_pixel_data + x + y *width + 1);
+	//		int bValue = (int)*(temp_pixel_data + x + y *width);*/
 
-			bDistribution[bValue]++;
-			gDistribution[gValue]++;
-			rDistribution[rValue]++;
-		}
+	//		int rValue = (int)temp_pixel_data[3 * (y * width + x) + 2];
+	//		int gValue = (int)temp_pixel_data[3 * (y * width + x) + 1];
+	//		int bValue = (int)temp_pixel_data[3 * (y * width + x)];
+
+	//		
+
+	//		bDistribution[bValue]++;
+	//		gDistribution[gValue]++;
+	//		rDistribution[rValue]++;
+	//	}
+	//}
+	std::vector<double> redDistribution(256);
+	std::vector<double> greenDistribution(256);
+	std::vector<double> blueDistribution(256);
+	for (int i = 0; i < 3 * height * width; i += 3)
+	{
+		blueDistribution[temp_pixel_data[i]]++;
+		greenDistribution[temp_pixel_data[i+1]]++;
+		redDistribution[temp_pixel_data[i+2]]++;
 	}
 	normalizeDistributions();
 
