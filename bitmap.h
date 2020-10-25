@@ -32,6 +32,7 @@ public:
 	int rDistribution[256];
 	int gDistribution[256];
 	int bDistribution[256];
+
 	
 
 public:

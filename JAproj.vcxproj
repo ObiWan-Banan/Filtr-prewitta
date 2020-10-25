@@ -203,14 +203,12 @@
   <ItemGroup>
     <ClCompile Include="JAproj.cpp" />
     <ClCompile Include="bitmap.cpp" />
-    <ClCompile Include="histogram.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="JAproj.h">
     </QtMoc>
     <ClInclude Include="bitmap.h" />
-    <ClInclude Include="histogram.h" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="debug\moc_predefs.h.cbt">

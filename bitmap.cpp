@@ -31,6 +31,7 @@ Bitmap::Bitmap()
 		gDistribution[i] = 0;
 		bDistribution[i] = 0;
 	}
+
 	
 	
 }
@@ -44,6 +45,7 @@ Bitmap::Bitmap(std::string filePath)
 		gDistribution[i] = 0;
 		bDistribution[i] = 0;
 	}
+	
 
 	std::ifstream file(filePath,std::ios::binary);
 	filesize = GetFileSize(filePath);

@@ -53,9 +53,6 @@
     <ClCompile Include="bitmap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="histogram.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -67,22 +64,14 @@
     <ClInclude Include="bitmap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="histogram.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    
-    
     <CustomBuild Include="debug\moc_predefs.h.cbt">
       <Filter>Generated Files</Filter>
     </CustomBuild>
     <CustomBuild Include="release\moc_predefs.h.cbt">
       <Filter>Generated Files</Filter>
     </CustomBuild>
-    
-    
-    
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="JAproj.ui">

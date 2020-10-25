@@ -20,7 +20,7 @@ class JAproj : public QMainWindow
     
 public:
     JAproj(QWidget *parent = Q_NULLPTR);
-    void createBarChart(int rDistribution[], int gDistribution[], int bDistribution[]);
+    void createBarChart(int rDistribution[], int gDistribution[], int bDistribution[], std::string histogramFilePath, bool beforeOrAfterAlgorithm);
     
 private slots:
     void on_quitButton_clicked();
