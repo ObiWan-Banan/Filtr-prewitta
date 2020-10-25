@@ -21,6 +21,41 @@ void JAproj::on_quitButton_clicked()
    
 }
 
+void JAproj::createBarChart(int rDistribution[], int gDistribution[], int bDistribution[])
+{
+    
+
+    QtCharts::QLineSeries* rseries = new QtCharts::QLineSeries();
+    QtCharts::QLineSeries* gseries = new QtCharts::QLineSeries();
+    QtCharts::QLineSeries* bseries = new QtCharts::QLineSeries();
+
+    for (int i = 0; i < 256; i++)
+    {
+        *rseries << QPointF(i, rDistribution[i]);
+        *gseries << QPointF(i, gDistribution[i]);
+        *bseries << QPointF(i, bDistribution[i]);
+    }
+    rseries->setColor(Qt::red);
+    gseries->setColor(Qt::green);
+    bseries->setColor(Qt::blue);
+
+    QtCharts::QChart* chart = new QtCharts::QChart();
+    chart->legend()->hide();
+    chart->addSeries(rseries);
+    chart->addSeries(gseries);
+    chart->addSeries(bseries);
+    chart->createDefaultAxes();
+    chart->setTitle("Histogram");
+
+    QtCharts::QChartView* chartView = new QtCharts::QChartView(chart);
+    chartView->setRenderHint(QPainter::Antialiasing);
+
+    setCentralWidget(chartView);
+   // show();
+    /*QPixmap r = QPixmap::grabWidget(redChartView);
+    r.save("r.png","PNG");*/
+}
+
 void JAproj::on_openButton_clicked()
 {
     QString filePath = QFileDialog::getOpenFileName(this,tr("Image chooser")," " ,tr("BMP Files (*.bmp)"));   
@@ -33,27 +68,28 @@ void JAproj::on_startAlgorithmButton_clicked()
 
     if (ui.radioButton_cpp->isChecked() || ui.radioButton_asm->isChecked())
     {
-       // Bitmap background("background.BMP");
+       
         try 
         {
             Bitmap b(imageFilePath);
-            Bitmap background("background.BMP");
             numberOfThreads = ui.lcdNumber->intValue();
-           // Histogram h(background);
+           
            
 
             QMessageBox::StandardButton reply;
             reply = QMessageBox::question(this, "JAproj", "Is loaded bitmap in color?", QMessageBox::Yes | QMessageBox::No);
             if (reply == QMessageBox::Yes)
             {
+                b.calculateHistogram();
                 b.grayscale();
             }
             if (ui.radioButton_cpp->isChecked())
             {
                 b.castPixelCharArrayToUnsignedCharArray();
-               // h.calculateHistogram(b);
-               //h.saveHistogram(imageFilePath);
-                b.calculateHistogram();
+               
+                //b.calculateHistogram(); //tutaj szary bedzie
+                createBarChart(b.rDistribution,b.gDistribution,b.bDistribution);
+                
                 b.makeMagic();
                b.saveToFile(imageFilePath);
             }

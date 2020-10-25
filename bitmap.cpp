@@ -25,18 +25,25 @@ Bitmap::Bitmap()
 	offset_to_pixel_data = 0;
 	filesize = 0;
 	padding = 0;
-	rDistribution.resize(256);
-	gDistribution.resize(256);
-	bDistribution.resize(256);
+	for (int i = 0; i < 256; i++)
+	{
+		rDistribution[i] = 0;
+		gDistribution[i] = 0;
+		bDistribution[i] = 0;
+	}
+	
 	
 }
 
 Bitmap::Bitmap(std::string filePath)
 {
 	
-	rDistribution.resize(256);
-	gDistribution.resize(256);
-	bDistribution.resize(256);
+	for (int i = 0; i < 256; i++)
+	{
+		rDistribution[i] = 0;
+		gDistribution[i] = 0;
+		bDistribution[i] = 0;
+	}
 
 	std::ifstream file(filePath,std::ios::binary);
 	filesize = GetFileSize(filePath);
@@ -83,7 +90,7 @@ void Bitmap::calculateHistogram()
 		gDistribution[temp[i + 1]]++;
 		rDistribution[temp[i + 2]]++;
 	}
-
+	
 	normalizeHistogram();
 
 	
@@ -94,7 +101,7 @@ void Bitmap::normalizeHistogram()
 	int rMax = 0;
 	int gMax = 0;
 	int bMax = 0;
-	int desiredMaximum = 300;
+	int desiredMaximum = 100;
 	for (int i = 0; i < 256; i++)
 	{
 		if (rDistribution[i] > rMax) rMax = rDistribution[i];
@@ -259,6 +266,8 @@ void Bitmap::setPixels(char* newPixels)
 {
 	pixel_data = newPixels;
 }
+
+
 
 
 	

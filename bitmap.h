@@ -4,6 +4,7 @@
 #include<memory>
 #include<qvector.h>
 #include <QtCore\qstring.h>
+
 #define BMP_HEADER_SIZE 14
 #define OFFSET_TO_bfOffBits 10
 #define OFFSET_TO_WIDTH 4
@@ -19,7 +20,7 @@ unsigned int get_int(char* data, int offset);
 
 class Bitmap
 {
-
+public:
 	char* bitmap_header;
 	char* DIB_header;
 	char* pixel_data;
@@ -28,9 +29,9 @@ class Bitmap
 	int offset_to_pixel_data;
 	int padding;
 	long filesize;
-	std::vector<int> rDistribution;
-	std::vector<int> gDistribution;
-	std::vector<int> bDistribution;
+	int rDistribution[256];
+	int gDistribution[256];
+	int bDistribution[256];
 	
 
 public:
@@ -66,6 +67,8 @@ public:
 	void grayscale();
 
 	void setPixels(char* newPixels);
+
+
 
 	
 
