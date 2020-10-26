@@ -11,8 +11,6 @@
 #include <QPixmap>
 #include "ui_JAproj.h"
 #include "bitmap.h"
-#include "histogram.h"
-
 
 class JAproj : public QMainWindow
 {
@@ -20,7 +18,8 @@ class JAproj : public QMainWindow
     
 public:
     JAproj(QWidget *parent = Q_NULLPTR);
-    void createBarChart(int rDistribution[], int gDistribution[], int bDistribution[], std::string histogramFilePath, bool beforeOrAfterAlgorithm);
+    QtCharts::QChartView* createLineChart(int rDistribution[], int gDistribution[], int bDistribution[], std::string histogramFilePath, bool beforeOrAfterAlgorithm);
+    void displayHistograms(QtCharts::QChartView* beforeAlgorithmHistogram, QtCharts::QChartView* afterAlgorithmHistogram);
     
 private slots:
     void on_quitButton_clicked();
@@ -28,5 +27,6 @@ private slots:
     void on_startAlgorithmButton_clicked();
 private:
     Ui::JAprojClass ui;
+    
     
 };

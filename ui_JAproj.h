@@ -48,7 +48,7 @@ public:
     {
         if (JAprojClass->objectName().isEmpty())
             JAprojClass->setObjectName(QString::fromUtf8("JAprojClass"));
-        JAprojClass->resize(375, 291);
+        JAprojClass->resize(376, 285);
         centralWidget = new QWidget(JAprojClass);
         centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
         horizontalLayoutWidget = new QWidget(centralWidget);

@@ -13,6 +13,7 @@ JAproj::JAproj(QWidget *parent)
     ui.setupUi(this);
     ui.lcdNumber->display(1); 
     ui.radioButton_cpp->setChecked(true);
+    
 }
 
 void JAproj::on_quitButton_clicked()
@@ -20,7 +21,7 @@ void JAproj::on_quitButton_clicked()
     close();
 }
 
-void JAproj::createBarChart(int rDistribution[],int gDistribution[], int bDistribution[], std::string histogramFilePath ,bool beforeOrAfterAlgorithm)
+QtCharts::QChartView* JAproj::createLineChart(int rDistribution[],int gDistribution[], int bDistribution[], std::string histogramFilePath, bool beforeOrAfterAlgorithm)
 {
     
 
@@ -44,25 +45,36 @@ void JAproj::createBarChart(int rDistribution[],int gDistribution[], int bDistri
     chart->addSeries(gseries);
     chart->addSeries(bseries);
     chart->createDefaultAxes();
+    chart->setAnimationOptions(QtCharts::QChart::SeriesAnimations);
 
-    chart->setTitle("Histogram");
+    if (beforeOrAfterAlgorithm)
+    {
+        chart->setTitle("Before algorithm histogram");
+    }
+    else
+    {
+        chart->setTitle("After algorithm histogram");
+    }
+   
 
     QtCharts::QChartView* chartView = new QtCharts::QChartView(chart);
     chartView->setRenderHint(QPainter::Antialiasing);
  
-    QPixmap p = chartView->grab();
-    std::string filepath;
-    if (beforeOrAfterAlgorithm)
-    {
-        filepath = histogramFilePath + "beforeAlgorithmHistogram.png";
-    }
-    else
-    {
+    return chartView;
+ 
 
-         filepath = histogramFilePath + "afterAlgorithmHistogram.png";
-    }
-    QString histogramSavePath = QString::fromStdString(filepath);
-    p.save(histogramSavePath, "PNG");
+}
+
+void JAproj::displayHistograms(QtCharts::QChartView* beforeAlgorithmHistogram, QtCharts::QChartView* afterAlgorithmHistogram)
+{
+    QVBoxLayout* lay = new QVBoxLayout;
+    lay->addWidget(beforeAlgorithmHistogram);
+    lay->addWidget(afterAlgorithmHistogram);
+
+    QWidget* w = new QWidget();
+    w->setLayout(lay);
+    w->resize(600, 500);
+    w->show();
 }
 
 void JAproj::on_openButton_clicked()
@@ -77,7 +89,8 @@ void JAproj::on_startAlgorithmButton_clicked()
 
     if (ui.radioButton_cpp->isChecked() || ui.radioButton_asm->isChecked())
     {
-       
+        QtCharts::QChartView* beforeHistogram = nullptr;
+        QtCharts::QChartView* afterHistogram = nullptr;
         try 
         {
             Bitmap b(imageFilePath);
@@ -99,15 +112,16 @@ void JAproj::on_startAlgorithmButton_clicked()
             if (ui.radioButton_cpp->isChecked())
             {
                 b.castPixelCharArrayToUnsignedCharArray();
-                createBarChart(b.rDistribution, b.gDistribution, b.bDistribution, imageFilePath, true);
+                beforeHistogram=createLineChart(b.rDistribution, b.gDistribution, b.bDistribution, imageFilePath, true);
                 b.makeMagic();
                 b.calculateHistogram();
-                createBarChart(b.rDistribution, b.gDistribution, b.bDistribution, imageFilePath, false);
+                afterHistogram=createLineChart(b.rDistribution, b.gDistribution, b.bDistribution, imageFilePath, false);
                b.saveToFile(imageFilePath);
             }
             else if (ui.radioButton_asm->isChecked())
             {
             }
+            displayHistograms(beforeHistogram, afterHistogram);
         }
         catch (...)
         {
