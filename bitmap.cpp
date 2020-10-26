@@ -1,5 +1,6 @@
 #include "bitmap.h"
 #include<vector>
+#include<thread>
 
 long GetFileSize(std::string filename)
 {
@@ -21,7 +22,7 @@ Bitmap::Bitmap()
 	DIB_header = nullptr;
 	pixel_data = nullptr;
 	width = 0;
-	height = 0;
+	height = 0;	
 	offset_to_pixel_data = 0;
 	filesize = 0;
 	padding = 0;

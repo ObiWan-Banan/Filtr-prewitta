@@ -4,8 +4,10 @@
 #include <qprogressbar.h>
 #include <qbuttongroup.h>
 #include <vector>
+#include <Windows.h>
 
 
+typedef int(__cdecl* FunAdd)(int x, int y);
 
 JAproj::JAproj(QWidget *parent)
     : QMainWindow(parent)
@@ -75,6 +77,7 @@ void JAproj::displayHistograms(QtCharts::QChartView* beforeAlgorithmHistogram, Q
     w->setLayout(lay);
     w->resize(600, 500);
     w->show();
+    
 }
 
 void JAproj::on_openButton_clicked()
@@ -91,6 +94,11 @@ void JAproj::on_startAlgorithmButton_clicked()
     {
         QtCharts::QChartView* beforeHistogram = nullptr;
         QtCharts::QChartView* afterHistogram = nullptr;
+        HMODULE hModule;
+        hModule = LoadLibrary(TEXT("C:\\Users\\rsswi\\source\\repos\\JAproj\\x64\\Debug\\PrewittCpp.dll"));
+        FunAdd AdditionFun = (FunAdd)GetProcAddress(hModule, "Addition");
+        AdditionFun(10, 10);
+       FreeLibrary(hModule);
         try 
         {
             Bitmap b(imageFilePath);

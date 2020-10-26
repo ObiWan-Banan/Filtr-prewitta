@@ -11,6 +11,8 @@
 #include <QPixmap>
 #include "ui_JAproj.h"
 #include "bitmap.h"
+#include<vector>
+#include<thread>
 
 class JAproj : public QMainWindow
 {
