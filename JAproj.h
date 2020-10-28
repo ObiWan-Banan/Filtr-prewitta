@@ -9,6 +9,7 @@
 #include<QtCharts/qbarcategoryaxis.h>
 #include<QtCharts/qvalueaxis.h>
 #include <QPixmap>
+#include <QLabel>
 #include "ui_JAproj.h"
 #include "bitmap.h"
 #include "timer.h"

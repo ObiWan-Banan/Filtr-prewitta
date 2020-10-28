@@ -41,6 +41,8 @@ public:
 	
 	Bitmap(std::string filePath);
 
+	void loadBitmap(std::string filePath);
+
 	int* getRDistribution();
 
 	int* getGDistribution();

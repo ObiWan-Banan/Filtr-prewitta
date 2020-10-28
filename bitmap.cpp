@@ -73,9 +73,43 @@ Bitmap::Bitmap(std::string filePath)
 		
 		file.read(temp, padding * sizeof(char));
 	}
-	
-	//file.read(pixel_data, filesize-offset_to_pixel_data);
+}
 
+void Bitmap::loadBitmap(std::string filePath)
+{
+	for (int i = 0; i < 256; i++)
+	{
+		rDistribution[i] = 0;
+		gDistribution[i] = 0;
+		bDistribution[i] = 0;
+	}
+
+
+	std::ifstream file(filePath, std::ios::binary);
+	filesize = GetFileSize(filePath);
+
+	bitmap_header = new char[BMP_HEADER_SIZE];
+	file.read(bitmap_header, BMP_HEADER_SIZE);
+
+	offset_to_pixel_data = get_int(bitmap_header, OFFSET_TO_bfOffBits);
+
+	DIB_header = new char[offset_to_pixel_data - BMP_HEADER_SIZE];
+	file.read(DIB_header, (offset_to_pixel_data - BMP_HEADER_SIZE));
+
+	width = get_int(DIB_header, OFFSET_TO_WIDTH);
+	height = get_int(DIB_header, OFFSET_TO_HEIGHT);
+	padding = (width * 3) % 4;
+	if (padding) padding = 4 - padding;
+
+	pixel_data = new  char[filesize - offset_to_pixel_data];
+	char* temp = new char[padding];
+
+	for (int i = 0; i < height; i++)
+	{
+		file.read(&pixel_data[i * width * 3], width * 3 * sizeof(char));
+
+		file.read(temp, padding * sizeof(char));
+	}
 }
 
 int* Bitmap::getRDistribution()
@@ -163,7 +197,6 @@ void Bitmap::saveToFile(std::string filePath)
 
 	file.write(bitmap_header,BMP_HEADER_SIZE);
 	file.write(DIB_header, (offset_to_pixel_data - BMP_HEADER_SIZE));
-	//file.write(pixel_data, filesize - offset_to_pixel_data);
 	char* temp = new char[padding];
 	temp[0] = 0;
 	temp[1] = 0;
@@ -250,7 +283,7 @@ void Bitmap::makeMagic()
 	{
 		pixel_data[i] = temp[i];
 	}
-	}
+}
 
 void Bitmap::grayscale()
 {
@@ -277,8 +310,6 @@ void Bitmap::grayscale()
 		}
 	}
 }
-
-
 
 void Bitmap::setPixels(char* newPixels)
 {

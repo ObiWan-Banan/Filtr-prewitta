@@ -16,6 +16,9 @@ JAproj::JAproj(QWidget *parent)
     ui.setupUi(this);
     ui.lcdNumber->display(1); 
     ui.radioButton_cpp->setChecked(true);
+    ui.cppTimeLabel->setText("N/A");
+    ui.asmAlgorithmTime->setText("N/A");
+    
     
 }
 
@@ -90,99 +93,92 @@ void JAproj::on_openButton_clicked()
 
 void JAproj::on_startAlgorithmButton_clicked()
 {
+    Bitmap b;
+    try
+    {
+        b.loadBitmap(imageFilePath);
+    }
+    catch (...)
+    {
+        QMessageBox::information(this, tr("ERROR"), "Please select file to be opened.");
+    }
+    b.castPixelCharArrayToUnsignedCharArray();
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, "JAproj", "Is loaded bitmap in color?", QMessageBox::Yes | QMessageBox::No);
+    if (reply == QMessageBox::Yes)
+    {
+        b.calculateHistogram();
+        b.grayscale();
+    }
+    else
+    {
+        b.calculateHistogram();
+    }
 
-    if (ui.radioButton_cpp->isChecked() || ui.radioButton_asm->isChecked())
+    if (ui.radioButton_cpp->isChecked())
     {
         QtCharts::QChartView* beforeHistogram = nullptr;
         QtCharts::QChartView* afterHistogram = nullptr;
         std::vector<std::thread> threadVector;
-        try 
-        {
-            Bitmap b(imageFilePath);
-            numberOfThreads = ui.lcdNumber->intValue();
-            int total_rows = b.getHeight();
-         
-            int rows = double(total_rows % numberOfThreads);
-            int rows_per_thread = floor(total_rows / numberOfThreads);
-
-            
-           
-            
-            QMessageBox::StandardButton reply;
-            reply = QMessageBox::question(this, "JAproj", "Is loaded bitmap in color?", QMessageBox::Yes | QMessageBox::No);
-            if (reply == QMessageBox::Yes)
-            {
-                b.calculateHistogram();
-                b.grayscale();
-            }
-            else
-            {
-                b.calculateHistogram();
-            }
-            if (ui.radioButton_cpp->isChecked())
-            {
-                HMODULE hModule;
-                hModule = LoadLibrary(TEXT("PrewittCpp.dll"));
-                pPrewittFilter prewittFilter = (pPrewittFilter)GetProcAddress(hModule, "prewittFilter");
-
-                b.castPixelCharArrayToUnsignedCharArray();
-                beforeHistogram=createLineChart(b.getRDistribution(), b.getGDistribution(), b.getBDistribution(), imageFilePath, true);
-                int arraySize = b.getFilesize() - b.getOffsetToPixels();
-                unsigned char* temp = new unsigned char[arraySize];
-               
-                Timer cppAlgoTimer;
-
-                
-                cppAlgoTimer.start();
-                for (int i = numberOfThreads; i > 0; i--)
-                {
-                    
-                    int start_row = rows_per_thread * (numberOfThreads - i);
-                    
-                    if (i == 1)
-                    {
-                        int end_row = rows_per_thread * (numberOfThreads - i + 1) +rows;
-                        std::thread fred(prewittFilter, b.getPixels(), temp,b.getWidth(), start_row, end_row);
-                        threadVector.push_back(std::move(fred));
-                    }
-                    else
-                    {
-                        int end_row = rows_per_thread * (numberOfThreads - i + 1);
-                        std::thread fred(prewittFilter, b.getPixels(), temp, b.getWidth(), start_row, end_row + 2);
-                        threadVector.push_back(std::move(fred));
-                    }
-                    
-                }
-                
-                for (std::thread& temp : threadVector)
-                {
-                    temp.join();
-                }
-                cppAlgoTimer.stop();
-                int cppAlgorithmTime = cppAlgoTimer.getTime();
-                
-                b.setPixels((char*)temp);
-               
-                
-                FreeLibrary(hModule);
-                b.calculateHistogram();
-                afterHistogram=createLineChart(b.getRDistribution(), b.getGDistribution(), b.getBDistribution(), imageFilePath, false);
-               b.saveToFile(imageFilePath);
-            }
-            else if (ui.radioButton_asm->isChecked())
-            {
-            }
-            displayHistograms(beforeHistogram, afterHistogram);
-        }
-        catch (...)
-        {
-            QMessageBox::information(this, tr("ERROR"), "Please select file to be opened.");
-        }
         
+        numberOfThreads = ui.lcdNumber->intValue();
+        int total_rows = b.getHeight();
+         
+        int rows = double(total_rows % numberOfThreads);
+        int rows_per_thread = floor(total_rows / numberOfThreads);
+          
+        HMODULE hModule;
+        hModule = LoadLibrary(TEXT("PrewittCpp.dll"));
+        pPrewittFilter prewittFilter = (pPrewittFilter)GetProcAddress(hModule, "prewittFilter");
+
+       // b.castPixelCharArrayToUnsignedCharArray();
+        beforeHistogram=createLineChart(b.getRDistribution(), b.getGDistribution(), b.getBDistribution(), imageFilePath, true);
+        int arraySize = b.getFilesize() - b.getOffsetToPixels();
+        unsigned char* temp = new unsigned char[arraySize];
+               
+        Timer cppAlgoTimer;
+
+                
+        cppAlgoTimer.start();
+        for (int i = numberOfThreads; i > 0; i--)
+        {
+                    
+           int start_row = rows_per_thread * (numberOfThreads - i);
+                    
+           if (i == 1)
+           {
+             int end_row = rows_per_thread * (numberOfThreads - i + 1) +rows;
+             std::thread fred(prewittFilter, b.getPixels(), temp,b.getWidth(), start_row, end_row);
+             threadVector.push_back(std::move(fred));
+           }
+           else
+           {
+             int end_row = rows_per_thread * (numberOfThreads - i + 1);
+             std::thread fred(prewittFilter, b.getPixels(), temp, b.getWidth(), start_row, end_row + 2);
+             threadVector.push_back(std::move(fred));
+           }
+                    
+        }
+                
+        for (std::thread& temp : threadVector)
+        {
+        temp.join();
+        }
+        cppAlgoTimer.stop();
+        int cppAlgorithmTime = cppAlgoTimer.getTime();
+        ui.cppTimeLabel->setText(QString::number(cppAlgorithmTime)+"ms");
+        b.setPixels((char*)temp);
+               
+                
+        FreeLibrary(hModule);
+        b.calculateHistogram();
+        afterHistogram=createLineChart(b.getRDistribution(), b.getGDistribution(), b.getBDistribution(), imageFilePath, false);
+        b.saveToFile(imageFilePath);
+        displayHistograms(beforeHistogram, afterHistogram);      
     }
-    else
+    else if(ui.radioButton_asm->isChecked())
     {
-        QMessageBox::information(this, tr("ERROR"), "Please choose dll.");
+        //TO DO ASM
     }
    
     

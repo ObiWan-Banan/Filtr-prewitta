@@ -14,6 +14,7 @@
 #include <QtWidgets/QGroupBox>
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QLCDNumber>
+#include <QtWidgets/QLabel>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QRadioButton>
@@ -41,6 +42,14 @@ public:
     QRadioButton *radioButton_cpp;
     QRadioButton *radioButton_asm;
     QLCDNumber *lcdNumber;
+    QWidget *horizontalLayoutWidget_2;
+    QHBoxLayout *horizontalLayout_2;
+    QLabel *label;
+    QLabel *cppTimeLabel;
+    QWidget *horizontalLayoutWidget_3;
+    QHBoxLayout *horizontalLayout_3;
+    QLabel *label_3;
+    QLabel *asmAlgorithmTime;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
 
@@ -48,12 +57,12 @@ public:
     {
         if (JAprojClass->objectName().isEmpty())
             JAprojClass->setObjectName(QString::fromUtf8("JAprojClass"));
-        JAprojClass->resize(376, 285);
+        JAprojClass->resize(376, 294);
         centralWidget = new QWidget(JAprojClass);
         centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
         horizontalLayoutWidget = new QWidget(centralWidget);
         horizontalLayoutWidget->setObjectName(QString::fromUtf8("horizontalLayoutWidget"));
-        horizontalLayoutWidget->setGeometry(QRect(10, 170, 361, 81));
+        horizontalLayoutWidget->setGeometry(QRect(10, 200, 361, 61));
         horizontalLayout = new QHBoxLayout(horizontalLayoutWidget);
         horizontalLayout->setSpacing(6);
         horizontalLayout->setContentsMargins(11, 11, 11, 11);
@@ -98,6 +107,42 @@ public:
         lcdNumber = new QLCDNumber(centralWidget);
         lcdNumber->setObjectName(QString::fromUtf8("lcdNumber"));
         lcdNumber->setGeometry(QRect(300, 90, 71, 31));
+        horizontalLayoutWidget_2 = new QWidget(centralWidget);
+        horizontalLayoutWidget_2->setObjectName(QString::fromUtf8("horizontalLayoutWidget_2"));
+        horizontalLayoutWidget_2->setGeometry(QRect(30, 150, 151, 41));
+        horizontalLayout_2 = new QHBoxLayout(horizontalLayoutWidget_2);
+        horizontalLayout_2->setSpacing(6);
+        horizontalLayout_2->setContentsMargins(11, 11, 11, 11);
+        horizontalLayout_2->setObjectName(QString::fromUtf8("horizontalLayout_2"));
+        horizontalLayout_2->setContentsMargins(0, 0, 0, 0);
+        label = new QLabel(horizontalLayoutWidget_2);
+        label->setObjectName(QString::fromUtf8("label"));
+
+        horizontalLayout_2->addWidget(label);
+
+        cppTimeLabel = new QLabel(horizontalLayoutWidget_2);
+        cppTimeLabel->setObjectName(QString::fromUtf8("cppTimeLabel"));
+
+        horizontalLayout_2->addWidget(cppTimeLabel);
+
+        horizontalLayoutWidget_3 = new QWidget(centralWidget);
+        horizontalLayoutWidget_3->setObjectName(QString::fromUtf8("horizontalLayoutWidget_3"));
+        horizontalLayoutWidget_3->setGeometry(QRect(210, 150, 161, 41));
+        horizontalLayout_3 = new QHBoxLayout(horizontalLayoutWidget_3);
+        horizontalLayout_3->setSpacing(6);
+        horizontalLayout_3->setContentsMargins(11, 11, 11, 11);
+        horizontalLayout_3->setObjectName(QString::fromUtf8("horizontalLayout_3"));
+        horizontalLayout_3->setContentsMargins(0, 0, 0, 0);
+        label_3 = new QLabel(horizontalLayoutWidget_3);
+        label_3->setObjectName(QString::fromUtf8("label_3"));
+
+        horizontalLayout_3->addWidget(label_3);
+
+        asmAlgorithmTime = new QLabel(horizontalLayoutWidget_3);
+        asmAlgorithmTime->setObjectName(QString::fromUtf8("asmAlgorithmTime"));
+
+        horizontalLayout_3->addWidget(asmAlgorithmTime);
+
         JAprojClass->setCentralWidget(centralWidget);
         mainToolBar = new QToolBar(JAprojClass);
         mainToolBar->setObjectName(QString::fromUtf8("mainToolBar"));
@@ -134,6 +179,10 @@ public:
         groupBox_2->setTitle(QCoreApplication::translate("JAprojClass", "DLL", nullptr));
         radioButton_cpp->setText(QCoreApplication::translate("JAprojClass", "C++", nullptr));
         radioButton_asm->setText(QCoreApplication::translate("JAprojClass", "ASM", nullptr));
+        label->setText(QCoreApplication::translate("JAprojClass", "C++ time:", nullptr));
+        cppTimeLabel->setText(QString());
+        label_3->setText(QCoreApplication::translate("JAprojClass", "ASM time:", nullptr));
+        asmAlgorithmTime->setText(QString());
     } // retranslateUi
 
 };
