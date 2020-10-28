@@ -7,7 +7,7 @@
 #include <Windows.h>
 
 
-typedef int(__cdecl* FunAdd)(int x, int y);
+typedef int(__cdecl* pPrewittFilter)(char* inputArray, int width, int height, int arraySize);
 
 JAproj::JAproj(QWidget *parent)
     : QMainWindow(parent)
@@ -94,11 +94,6 @@ void JAproj::on_startAlgorithmButton_clicked()
     {
         QtCharts::QChartView* beforeHistogram = nullptr;
         QtCharts::QChartView* afterHistogram = nullptr;
-        HMODULE hModule;
-        hModule = LoadLibrary(TEXT("C:\\Users\\rsswi\\source\\repos\\JAproj\\x64\\Debug\\PrewittCpp.dll"));
-        FunAdd AdditionFun = (FunAdd)GetProcAddress(hModule, "Addition");
-        AdditionFun(10, 10);
-       FreeLibrary(hModule);
         try 
         {
             Bitmap b(imageFilePath);
@@ -119,9 +114,15 @@ void JAproj::on_startAlgorithmButton_clicked()
             }
             if (ui.radioButton_cpp->isChecked())
             {
+                HMODULE hModule;
+                hModule = LoadLibrary(TEXT("PrewittCpp.dll"));
+                pPrewittFilter prewittFilter = (pPrewittFilter)GetProcAddress(hModule, "prewittFilter");
+
                 b.castPixelCharArrayToUnsignedCharArray();
                 beforeHistogram=createLineChart(b.rDistribution, b.gDistribution, b.bDistribution, imageFilePath, true);
-                b.makeMagic();
+                //b.makeMagic();
+                prewittFilter(b.pixel_data, b.width, b.height, (b.filesize - b.offset_to_pixel_data));
+                FreeLibrary(hModule);
                 b.calculateHistogram();
                 afterHistogram=createLineChart(b.rDistribution, b.gDistribution, b.bDistribution, imageFilePath, false);
                b.saveToFile(imageFilePath);
