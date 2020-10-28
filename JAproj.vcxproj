@@ -204,8 +204,10 @@
     <ClCompile Include="JAproj.cpp" />
     <ClCompile Include="bitmap.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="timer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="timer.h" />
     <QtMoc Include="JAproj.h">
     </QtMoc>
     <ClInclude Include="bitmap.h" />

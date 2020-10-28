@@ -5,6 +5,7 @@
 #include <qbuttongroup.h>
 #include <vector>
 #include <Windows.h>
+#include<time.h>
 
 
 typedef int(__cdecl* pPrewittFilter)(char* inputArray,  unsigned char* outputArray, int width, int start_height, int stop_height);
@@ -100,15 +101,11 @@ void JAproj::on_startAlgorithmButton_clicked()
             Bitmap b(imageFilePath);
             numberOfThreads = ui.lcdNumber->intValue();
             int total_rows = b.getHeight();
-            /*int rows = double(total_rows % 4);
-            int rows_per_thread = floor(total_rows / 4);*/
+         
             int rows = double(total_rows % numberOfThreads);
             int rows_per_thread = floor(total_rows / numberOfThreads);
 
-            /*int row_t1 = rows_per_thread;
-            int row_t2 = rows_per_thread * 2 + rows;
-            int row_t3 = rows_per_thread * 3;
-            int row_t4 = rows_per_thread * 4 + rows;*/
+            
            
             
             QMessageBox::StandardButton reply;
@@ -133,6 +130,10 @@ void JAproj::on_startAlgorithmButton_clicked()
                 int arraySize = b.getFilesize() - b.getOffsetToPixels();
                 unsigned char* temp = new unsigned char[arraySize];
                
+                Timer cppAlgoTimer;
+
+                
+                cppAlgoTimer.start();
                 for (int i = numberOfThreads; i > 0; i--)
                 {
                     
@@ -150,12 +151,15 @@ void JAproj::on_startAlgorithmButton_clicked()
                         std::thread fred(prewittFilter, b.getPixels(), temp, b.getWidth(), start_row, end_row + 2);
                         threadVector.push_back(std::move(fred));
                     }
-                    int dupa = 0;
+                    
                 }
+                
                 for (std::thread& temp : threadVector)
                 {
                     temp.join();
                 }
+                cppAlgoTimer.stop();
+                int cppAlgorithmTime = cppAlgoTimer.getTime();
                 
                 b.setPixels((char*)temp);
                

@@ -11,6 +11,7 @@
 #include <QPixmap>
 #include "ui_JAproj.h"
 #include "bitmap.h"
+#include "timer.h"
 #include<vector>
 #include<thread>
 
