@@ -110,7 +110,7 @@ void JAproj::on_startAlgorithmButton_clicked()
             int row_t3 = rows_per_thread * 3;
             int row_t4 = rows_per_thread * 4 + rows;*/
            
-
+            
             QMessageBox::StandardButton reply;
             reply = QMessageBox::question(this, "JAproj", "Is loaded bitmap in color?", QMessageBox::Yes | QMessageBox::No);
             if (reply == QMessageBox::Yes)
@@ -129,28 +129,39 @@ void JAproj::on_startAlgorithmButton_clicked()
                 pPrewittFilter prewittFilter = (pPrewittFilter)GetProcAddress(hModule, "prewittFilter");
 
                 b.castPixelCharArrayToUnsignedCharArray();
-                //beforeHistogram=createLineChart(b.rDistribution, b.gDistribution, b.bDistribution, imageFilePath, true);
                 beforeHistogram=createLineChart(b.getRDistribution(), b.getGDistribution(), b.getBDistribution(), imageFilePath, true);
-                //prewittFilter(b.pixel_data, b.width, b.height, (b.filesize - b.offset_to_pixel_data));
                 int arraySize = b.getFilesize() - b.getOffsetToPixels();
                 unsigned char* temp = new unsigned char[arraySize];
                
-
-
-                /*std::thread t1(prewittFilter, b.getPixels(), temp, b.getWidth(), 0, row_t1 + 2);
-                std::thread t2(prewittFilter, b.getPixels(), temp, b.getWidth(), row_t1, row_t2 + 2);
-                std::thread t3(prewittFilter, b.getPixels(), temp, b.getWidth(), row_t2, row_t3 + 2);
-                std::thread t4(prewittFilter, b.getPixels(), temp, b.getWidth(), row_t3, row_t4);
-                t1.join();
-                t2.join();
-                t3.join();
-                t4.join();*/
+                for (int i = numberOfThreads; i > 0; i--)
+                {
+                    
+                    int start_row = rows_per_thread * (numberOfThreads - i);
+                    
+                    if (i == 1)
+                    {
+                        int end_row = rows_per_thread * (numberOfThreads - i + 1) +rows;
+                        std::thread fred(prewittFilter, b.getPixels(), temp,b.getWidth(), start_row, end_row);
+                        threadVector.push_back(std::move(fred));
+                    }
+                    else
+                    {
+                        int end_row = rows_per_thread * (numberOfThreads - i + 1);
+                        std::thread fred(prewittFilter, b.getPixels(), temp, b.getWidth(), start_row, end_row + 2);
+                        threadVector.push_back(std::move(fred));
+                    }
+                    int dupa = 0;
+                }
+                for (std::thread& temp : threadVector)
+                {
+                    temp.join();
+                }
+                
                 b.setPixels((char*)temp);
-               // b.makeMagic();
+               
                 
                 FreeLibrary(hModule);
                 b.calculateHistogram();
-               // afterHistogram=createLineChart(b.rDistribution, b.gDistribution, b.bDistribution, imageFilePath, false);
                 afterHistogram=createLineChart(b.getRDistribution(), b.getGDistribution(), b.getBDistribution(), imageFilePath, false);
                b.saveToFile(imageFilePath);
             }
