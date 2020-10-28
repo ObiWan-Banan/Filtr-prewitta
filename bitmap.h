@@ -20,7 +20,7 @@ unsigned int get_int(char* data, int offset);
 
 class Bitmap
 {
-public:
+
 	char* bitmap_header;
 	char* DIB_header;
 	char* pixel_data;
@@ -40,6 +40,12 @@ public:
 	Bitmap();
 	
 	Bitmap(std::string filePath);
+
+	int* getRDistribution();
+
+	int* getGDistribution();
+
+	int* getBDistribution();
 
 	void calculateHistogram();
 

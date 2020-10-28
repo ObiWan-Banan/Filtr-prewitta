@@ -78,6 +78,21 @@ Bitmap::Bitmap(std::string filePath)
 
 }
 
+int* Bitmap::getRDistribution()
+{
+	return rDistribution;
+}
+
+int* Bitmap::getGDistribution()
+{
+	return gDistribution;
+}
+
+int* Bitmap::getBDistribution()
+{
+	return bDistribution;
+}
+
 void Bitmap::calculateHistogram()
 {
 	

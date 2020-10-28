@@ -7,7 +7,7 @@
 #include <Windows.h>
 
 
-typedef int(__cdecl* pPrewittFilter)(char* inputArray, int width, int height, int arraySize);
+typedef int(__cdecl* pPrewittFilter)(char* inputArray,  unsigned char* outputArray, int width, int start_height, int stop_height);
 
 JAproj::JAproj(QWidget *parent)
     : QMainWindow(parent)
@@ -94,11 +94,21 @@ void JAproj::on_startAlgorithmButton_clicked()
     {
         QtCharts::QChartView* beforeHistogram = nullptr;
         QtCharts::QChartView* afterHistogram = nullptr;
+        std::vector<std::thread> threadVector;
         try 
         {
             Bitmap b(imageFilePath);
             numberOfThreads = ui.lcdNumber->intValue();
-           
+            int total_rows = b.getHeight();
+            /*int rows = double(total_rows % 4);
+            int rows_per_thread = floor(total_rows / 4);*/
+            int rows = double(total_rows % numberOfThreads);
+            int rows_per_thread = floor(total_rows / numberOfThreads);
+
+            /*int row_t1 = rows_per_thread;
+            int row_t2 = rows_per_thread * 2 + rows;
+            int row_t3 = rows_per_thread * 3;
+            int row_t4 = rows_per_thread * 4 + rows;*/
            
 
             QMessageBox::StandardButton reply;
@@ -119,12 +129,29 @@ void JAproj::on_startAlgorithmButton_clicked()
                 pPrewittFilter prewittFilter = (pPrewittFilter)GetProcAddress(hModule, "prewittFilter");
 
                 b.castPixelCharArrayToUnsignedCharArray();
-                beforeHistogram=createLineChart(b.rDistribution, b.gDistribution, b.bDistribution, imageFilePath, true);
-                //b.makeMagic();
-                prewittFilter(b.pixel_data, b.width, b.height, (b.filesize - b.offset_to_pixel_data));
+                //beforeHistogram=createLineChart(b.rDistribution, b.gDistribution, b.bDistribution, imageFilePath, true);
+                beforeHistogram=createLineChart(b.getRDistribution(), b.getGDistribution(), b.getBDistribution(), imageFilePath, true);
+                //prewittFilter(b.pixel_data, b.width, b.height, (b.filesize - b.offset_to_pixel_data));
+                int arraySize = b.getFilesize() - b.getOffsetToPixels();
+                unsigned char* temp = new unsigned char[arraySize];
+               
+
+
+                /*std::thread t1(prewittFilter, b.getPixels(), temp, b.getWidth(), 0, row_t1 + 2);
+                std::thread t2(prewittFilter, b.getPixels(), temp, b.getWidth(), row_t1, row_t2 + 2);
+                std::thread t3(prewittFilter, b.getPixels(), temp, b.getWidth(), row_t2, row_t3 + 2);
+                std::thread t4(prewittFilter, b.getPixels(), temp, b.getWidth(), row_t3, row_t4);
+                t1.join();
+                t2.join();
+                t3.join();
+                t4.join();*/
+                b.setPixels((char*)temp);
+               // b.makeMagic();
+                
                 FreeLibrary(hModule);
                 b.calculateHistogram();
-                afterHistogram=createLineChart(b.rDistribution, b.gDistribution, b.bDistribution, imageFilePath, false);
+               // afterHistogram=createLineChart(b.rDistribution, b.gDistribution, b.bDistribution, imageFilePath, false);
+                afterHistogram=createLineChart(b.getRDistribution(), b.getGDistribution(), b.getBDistribution(), imageFilePath, false);
                b.saveToFile(imageFilePath);
             }
             else if (ui.radioButton_asm->isChecked())
