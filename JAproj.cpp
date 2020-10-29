@@ -6,9 +6,10 @@
 #include <vector>
 #include <Windows.h>
 #include<time.h>
+#include<cstdint>
 
-
-typedef int(__cdecl* pPrewittFilter)(char* inputArray,  unsigned char* outputArray, int width, int start_height, int stop_height);
+typedef void(__cdecl* pPrewittFilter)(char* inputArray,  unsigned char* outputArray, int width, int start_height, int stop_height);
+typedef uint32_t(__cdecl* pSUM)(uint32_t x, uint32_t y);
 
 JAproj::JAproj(QWidget *parent)
     : QMainWindow(parent)
@@ -101,6 +102,7 @@ void JAproj::on_startAlgorithmButton_clicked()
     catch (...)
     {
         QMessageBox::information(this, tr("ERROR"), "Please select file to be opened.");
+        return;
     }
     b.castPixelCharArrayToUnsignedCharArray();
     QMessageBox::StandardButton reply;
@@ -131,7 +133,6 @@ void JAproj::on_startAlgorithmButton_clicked()
         hModule = LoadLibrary(TEXT("PrewittCpp.dll"));
         pPrewittFilter prewittFilter = (pPrewittFilter)GetProcAddress(hModule, "prewittFilter");
 
-       // b.castPixelCharArrayToUnsignedCharArray();
         beforeHistogram=createLineChart(b.getRDistribution(), b.getGDistribution(), b.getBDistribution(), imageFilePath, true);
         int arraySize = b.getFilesize() - b.getOffsetToPixels();
         unsigned char* temp = new unsigned char[arraySize];
@@ -178,6 +179,12 @@ void JAproj::on_startAlgorithmButton_clicked()
     }
     else if(ui.radioButton_asm->isChecked())
     {
+        HMODULE hModule;
+        hModule = LoadLibrary(TEXT("PrewittASM.dll"));
+        pSUM Sum = (pSUM)GetProcAddress(hModule, "SUM");
+       
+       int sum= Sum(10, 10);
+       int masdhujdsfhjfsdaj = 0;
         //TO DO ASM
     }
    
