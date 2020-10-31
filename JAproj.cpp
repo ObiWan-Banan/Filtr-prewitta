@@ -9,7 +9,7 @@
 #include<cstdint>
 
 typedef void(__cdecl* pPrewittFilter)(char* inputArray,  unsigned char* outputArray, int width, int start_height, int stop_height);
-typedef uint32_t(__cdecl* pSUM)(uint32_t x, uint32_t y);
+typedef uint32_t(__cdecl* pPrewittFilterASM)(char* inputArray, unsigned char* outputArray, int width, int start_height, int stop_height); /*int x, int y, int width, int start_height, int stop_height*/
 
 JAproj::JAproj(QWidget *parent)
     : QMainWindow(parent)
@@ -116,29 +116,26 @@ void JAproj::on_startAlgorithmButton_clicked()
     {
         b.calculateHistogram();
     }
+    QtCharts::QChartView* beforeHistogram = nullptr;
+    QtCharts::QChartView* afterHistogram = nullptr;
+    std::vector<std::thread> threadVector;
 
+    numberOfThreads = ui.lcdNumber->intValue();
+    int total_rows = b.getHeight();
+
+    int rows = double(total_rows % numberOfThreads);
+    int rows_per_thread = floor(total_rows / numberOfThreads);
+    beforeHistogram = createLineChart(b.getRDistribution(), b.getGDistribution(), b.getBDistribution(), imageFilePath, true);
+
+    int arraySize = b.getFilesize() - b.getOffsetToPixels();
+    unsigned char* temp = new unsigned char[arraySize];
     if (ui.radioButton_cpp->isChecked())
-    {
-        QtCharts::QChartView* beforeHistogram = nullptr;
-        QtCharts::QChartView* afterHistogram = nullptr;
-        std::vector<std::thread> threadVector;
-        
-        numberOfThreads = ui.lcdNumber->intValue();
-        int total_rows = b.getHeight();
-         
-        int rows = double(total_rows % numberOfThreads);
-        int rows_per_thread = floor(total_rows / numberOfThreads);
-          
+    {      
         HMODULE hModule;
         hModule = LoadLibrary(TEXT("PrewittCpp.dll"));
         pPrewittFilter prewittFilter = (pPrewittFilter)GetProcAddress(hModule, "prewittFilter");
-
-        beforeHistogram=createLineChart(b.getRDistribution(), b.getGDistribution(), b.getBDistribution(), imageFilePath, true);
-        int arraySize = b.getFilesize() - b.getOffsetToPixels();
-        unsigned char* temp = new unsigned char[arraySize];
                
         Timer cppAlgoTimer;
-
                 
         cppAlgoTimer.start();
         for (int i = numberOfThreads; i > 0; i--)
@@ -168,26 +165,45 @@ void JAproj::on_startAlgorithmButton_clicked()
         cppAlgoTimer.stop();
         int cppAlgorithmTime = cppAlgoTimer.getTime();
         ui.cppTimeLabel->setText(QString::number(cppAlgorithmTime)+"ms");
-        b.setPixels((char*)temp);
-               
-                
-        FreeLibrary(hModule);
-        b.calculateHistogram();
-        afterHistogram=createLineChart(b.getRDistribution(), b.getGDistribution(), b.getBDistribution(), imageFilePath, false);
-        b.saveToFile(imageFilePath);
-        displayHistograms(beforeHistogram, afterHistogram);      
+                            
+        FreeLibrary(hModule);  
     }
     else if(ui.radioButton_asm->isChecked())
     {
         HMODULE hModule;
         hModule = LoadLibrary(TEXT("PrewittASM.dll"));
-        pSUM Sum = (pSUM)GetProcAddress(hModule, "SUM");
+        pPrewittFilterASM prewittFilter = (pPrewittFilterASM)GetProcAddress(hModule, "prewittFilter");
        
-       int sum= Sum(10, 10);
-       int masdhujdsfhjfsdaj = 0;
-        //TO DO ASM
+        for (int i = numberOfThreads; i > 0; i--)
+        {
+
+            int start_row = rows_per_thread * (numberOfThreads - i);
+
+            if (i == 1)
+            {
+                int end_row = rows_per_thread * (numberOfThreads - i + 1) + rows;
+                std::thread fred(prewittFilter, b.getPixels(), temp, b.getWidth(), start_row, end_row);
+                threadVector.push_back(std::move(fred));
+            }
+            else
+            {
+                int end_row = rows_per_thread * (numberOfThreads - i + 1);
+                std::thread fred(prewittFilter, b.getPixels(), temp, b.getWidth(), start_row, end_row);
+                threadVector.push_back(std::move(fred));
+            }
+
+        }
+
+        for (std::thread& temp : threadVector)
+        {
+            temp.join();
+        }
+       int j = 0;
     }
-   
-    
+    b.setPixels((char*)temp);
+    b.calculateHistogram();
+    afterHistogram = createLineChart(b.getRDistribution(), b.getGDistribution(), b.getBDistribution(), imageFilePath, false);
+    b.saveToFile(imageFilePath);
+    displayHistograms(beforeHistogram, afterHistogram);
     
 }
