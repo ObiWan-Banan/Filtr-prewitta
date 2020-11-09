@@ -75,7 +75,7 @@ Bitmap::Bitmap(std::string filePath)
 	}
 }
 
-void Bitmap::loadBitmap(std::string filePath)
+bool Bitmap::loadBitmap(std::string filePath)
 {
 	for (int i = 0; i < 256; i++)
 	{
@@ -87,6 +87,11 @@ void Bitmap::loadBitmap(std::string filePath)
 
 	std::ifstream file(filePath, std::ios::binary);
 	filesize = GetFileSize(filePath);
+
+	if (filesize > GB)
+	{
+		return false;
+	}
 
 	bitmap_header = new char[BMP_HEADER_SIZE];
 	file.read(bitmap_header, BMP_HEADER_SIZE);
@@ -110,6 +115,7 @@ void Bitmap::loadBitmap(std::string filePath)
 
 		file.read(temp, padding * sizeof(char));
 	}
+	return true;
 }
 
 int* Bitmap::getRDistribution()

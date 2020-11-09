@@ -9,7 +9,7 @@
 #include<cstdint>
 
 typedef void(__cdecl* pPrewittFilter)(char* inputArray,  unsigned char* outputArray, int width, int start_height, int stop_height);
-typedef uint32_t(__cdecl* pPrewittFilterASM)(char* inputArray, unsigned char* outputArray, int width, int start_height, int stop_height); /*int x, int y, int width, int start_height, int stop_height*/
+typedef uint32_t(__cdecl* pPrewittFilterASM)(char* inputArray, unsigned char* outputArray,int width, int start_height,int stop_height); /*int x, int y, int width, int start_height, int stop_height*/
 
 JAproj::JAproj(QWidget *parent)
     : QMainWindow(parent)
@@ -19,8 +19,7 @@ JAproj::JAproj(QWidget *parent)
     ui.radioButton_cpp->setChecked(true);
     ui.cppTimeLabel->setText("N/A");
     ui.asmAlgorithmTime->setText("N/A");
-    
-    
+  
 }
 
 void JAproj::on_quitButton_clicked()
@@ -97,7 +96,12 @@ void JAproj::on_startAlgorithmButton_clicked()
     Bitmap b;
     try
     {
-        b.loadBitmap(imageFilePath);
+        bool load = b.loadBitmap(imageFilePath);
+        if (!load)
+        {
+            QMessageBox::information(this, tr("ERROR"), "File is too big. Maximum file size is 1GB.");
+            return;
+        }
     }
     catch (...)
     {
@@ -173,7 +177,10 @@ void JAproj::on_startAlgorithmButton_clicked()
         HMODULE hModule;
         hModule = LoadLibrary(TEXT("PrewittASM.dll"));
         pPrewittFilterASM prewittFilter = (pPrewittFilterASM)GetProcAddress(hModule, "prewittFilter");
-       
+
+        Timer asmAlgoTimer;
+
+        asmAlgoTimer.start();
         for (int i = numberOfThreads; i > 0; i--)
         {
 
@@ -182,13 +189,13 @@ void JAproj::on_startAlgorithmButton_clicked()
             if (i == 1)
             {
                 int end_row = rows_per_thread * (numberOfThreads - i + 1) + rows;
-                std::thread fred(prewittFilter, b.getPixels(), temp, b.getWidth(), start_row, end_row);
+                std::thread fred(prewittFilter, b.getPixels(),temp, b.getWidth()-2,start_row,end_row-2);
                 threadVector.push_back(std::move(fred));
             }
             else
             {
                 int end_row = rows_per_thread * (numberOfThreads - i + 1);
-                std::thread fred(prewittFilter, b.getPixels(), temp, b.getWidth(), start_row, end_row);
+                std::thread fred(prewittFilter, b.getPixels(),temp, b.getWidth() - 2, start_row, end_row);
                 threadVector.push_back(std::move(fred));
             }
 
@@ -198,7 +205,11 @@ void JAproj::on_startAlgorithmButton_clicked()
         {
             temp.join();
         }
-       int j = 0;
+        asmAlgoTimer.stop();
+        int cppAlgorithmTime = asmAlgoTimer.getTime();
+        ui.asmAlgorithmTime->setText(QString::number(cppAlgorithmTime) + "ms");
+
+        FreeLibrary(hModule);
     }
     b.setPixels((char*)temp);
     b.calculateHistogram();
