@@ -70,7 +70,7 @@ public:
 
 	long getFilesize();
 
-	void saveToFile(std::string filePath);
+	void saveToFile(std::string filePath, bool dllCppLibrary);
 
 	void makeMagic();
 

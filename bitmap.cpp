@@ -196,9 +196,17 @@ int Bitmap::getOffsetToPixels() { return offset_to_pixel_data; }
 
 long Bitmap::getFilesize() { return filesize; }
 
-void Bitmap::saveToFile(std::string filePath)
+void Bitmap::saveToFile(std::string filePath, bool dllCppLibrary)
 {
-	std::string imageFilePath = filePath.substr(0, filePath.find('.')) + "NOWY.BMP";
+	std::string imageFilePath;
+	if (dllCppLibrary)
+	{
+	   imageFilePath = filePath.substr(0, filePath.find('.')) + "CppDllOutput.BMP";
+	}
+	else
+	{
+		imageFilePath = filePath.substr(0, filePath.find('.')) + "AsmDllOutput.BMP";
+	}
 	std::ofstream file(imageFilePath,std::ios::binary);
 
 	file.write(bitmap_header,BMP_HEADER_SIZE);
@@ -300,15 +308,15 @@ void Bitmap::grayscale()
 	{
 		for (int j = 0; j < width; j++)
 		{
-			r = (int)pixel_data[(i * width + j) * 3 + 2];
-			g = (int)pixel_data[(i * width + j) * 3 + 1];
-			b = (int)pixel_data[(i * width + j) * 3 ];
+			r = pixel_data[(i * width + j) * 3 + 2];
+			g = pixel_data[(i * width + j) * 3 + 1];
+			b = pixel_data[(i * width + j) * 3 ];
 
 			r = r * 0.299;
 			g = g * 0.587;
 			b = b * 0.144;
 
-			gray =(unsigned char) (r + g + b);
+			gray = (r + g + b);
 
 			pixel_data[(i * width + j) * 3] = gray;
 			pixel_data[(i * width + j) * 3+1] = gray;

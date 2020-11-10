@@ -8,8 +8,8 @@
 #include<time.h>
 #include<cstdint>
 
-typedef void(__cdecl* pPrewittFilter)(char* inputArray,  unsigned char* outputArray, int width, int start_height, int stop_height);
-typedef uint32_t(__cdecl* pPrewittFilterASM)(char* inputArray, unsigned char* outputArray,int width, int start_height,int stop_height); /*int x, int y, int width, int start_height, int stop_height*/
+typedef void(__cdecl* pPrewittFilter)(char* inputArray,   char* outputArray, int width, int start_height, int stop_height);
+typedef uint32_t(__cdecl* pPrewittFilterASM)(char* inputArray,  char* outputArray,int width, int start_height,int stop_height);
 
 JAproj::JAproj(QWidget *parent)
     : QMainWindow(parent)
@@ -132,12 +132,20 @@ void JAproj::on_startAlgorithmButton_clicked()
     beforeHistogram = createLineChart(b.getRDistribution(), b.getGDistribution(), b.getBDistribution(), imageFilePath, true);
 
     int arraySize = b.getFilesize() - b.getOffsetToPixels();
-    unsigned char* temp = new unsigned char[arraySize];
+     char* temp = new  char[arraySize];
+
+     bool ifCppDllChosen = true;
     if (ui.radioButton_cpp->isChecked())
     {      
         HMODULE hModule;
         hModule = LoadLibrary(TEXT("PrewittCpp.dll"));
         pPrewittFilter prewittFilter = (pPrewittFilter)GetProcAddress(hModule, "prewittFilter");
+
+        if (hModule == NULL)
+        {
+            QMessageBox::information(this, tr("ERROR"), "DLL C++ library was not found.");
+            return;
+        }
                
         Timer cppAlgoTimer;
                 
@@ -178,6 +186,12 @@ void JAproj::on_startAlgorithmButton_clicked()
         hModule = LoadLibrary(TEXT("PrewittASM.dll"));
         pPrewittFilterASM prewittFilter = (pPrewittFilterASM)GetProcAddress(hModule, "prewittFilter");
 
+        if (hModule == NULL)
+        {
+            QMessageBox::information(this, tr("ERROR"), "DLL ASM library was not found.");
+            return;
+        }
+
         Timer asmAlgoTimer;
 
         asmAlgoTimer.start();
@@ -210,11 +224,12 @@ void JAproj::on_startAlgorithmButton_clicked()
         ui.asmAlgorithmTime->setText(QString::number(cppAlgorithmTime) + "ms");
 
         FreeLibrary(hModule);
+        ifCppDllChosen = false;
     }
     b.setPixels((char*)temp);
     b.calculateHistogram();
     afterHistogram = createLineChart(b.getRDistribution(), b.getGDistribution(), b.getBDistribution(), imageFilePath, false);
-    b.saveToFile(imageFilePath);
+    b.saveToFile(imageFilePath,ifCppDllChosen);
     displayHistograms(beforeHistogram, afterHistogram);
     
 }
