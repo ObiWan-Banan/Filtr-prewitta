@@ -301,7 +301,7 @@ void Bitmap::makeMagic()
 
 void Bitmap::grayscale()
 {
-	int r, g, b;
+	unsigned char r, g, b;
 	unsigned char gray;
 	
 	for (int i = 0; i < height; i++)

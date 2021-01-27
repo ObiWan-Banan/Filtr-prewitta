@@ -19,6 +19,7 @@ JAproj::JAproj(QWidget *parent)
     ui.radioButton_cpp->setChecked(true);
     ui.cppTimeLabel->setText("N/A");
     ui.asmAlgorithmTime->setText("N/A");
+    ui.horizontalSlider->setValue(std::thread::hardware_concurrency());
   
 }
 
@@ -90,7 +91,6 @@ void JAproj::on_openButton_clicked()
     imageFilePath = filePath.toLocal8Bit().constData();
     QMessageBox::information(this, tr("file name"), "Selected file path: "+filePath);
 }
-
 void JAproj::on_startAlgorithmButton_clicked()
 {
     Bitmap b;
@@ -132,7 +132,7 @@ void JAproj::on_startAlgorithmButton_clicked()
     beforeHistogram = createLineChart(b.getRDistribution(), b.getGDistribution(), b.getBDistribution(), imageFilePath, true);
 
     int arraySize = b.getFilesize() - b.getOffsetToPixels();
-     char* temp = new  char[arraySize];
+    char* temp = new  char[arraySize];
 
      bool ifCppDllChosen = true;
     if (ui.radioButton_cpp->isChecked())
@@ -231,5 +231,4 @@ void JAproj::on_startAlgorithmButton_clicked()
     afterHistogram = createLineChart(b.getRDistribution(), b.getGDistribution(), b.getBDistribution(), imageFilePath, false);
     b.saveToFile(imageFilePath,ifCppDllChosen);
     displayHistograms(beforeHistogram, afterHistogram);
-    
 }
