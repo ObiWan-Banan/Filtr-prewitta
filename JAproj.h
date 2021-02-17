@@ -15,6 +15,8 @@
 #include "timer.h"
 #include<vector>
 #include<thread>
+#include<iostream>
+#include<fstream>
 
 class JAproj : public QMainWindow
 {

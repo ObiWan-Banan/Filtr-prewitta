@@ -84,7 +84,6 @@ void JAproj::displayHistograms(QtCharts::QChartView* beforeAlgorithmHistogram, Q
     w->show();
     
 }
-
 void JAproj::on_openButton_clicked()
 {
     QString filePath = QFileDialog::getOpenFileName(this,tr("Image chooser")," " ,tr("BMP Files (*.bmp)"));   
@@ -137,6 +136,7 @@ void JAproj::on_startAlgorithmButton_clicked()
      bool ifCppDllChosen = true;
     if (ui.radioButton_cpp->isChecked())
     {      
+       
         HMODULE hModule;
         hModule = LoadLibrary(TEXT("PrewittCpp.dll"));
         pPrewittFilter prewittFilter = (pPrewittFilter)GetProcAddress(hModule, "prewittFilter");
@@ -146,38 +146,36 @@ void JAproj::on_startAlgorithmButton_clicked()
             QMessageBox::information(this, tr("ERROR"), "DLL C++ library was not found.");
             return;
         }
-               
         Timer cppAlgoTimer;
-                
-        cppAlgoTimer.start();
-        for (int i = numberOfThreads; i > 0; i--)
-        {
-                    
-           int start_row = rows_per_thread * (numberOfThreads - i);
-                    
-           if (i == 1)
-           {
-             int end_row = rows_per_thread * (numberOfThreads - i + 1) +rows;
-             std::thread fred(prewittFilter, b.getPixels(), temp,b.getWidth(), start_row, end_row);
-             threadVector.push_back(std::move(fred));
-           }
-           else
-           {
-             int end_row = rows_per_thread * (numberOfThreads - i + 1);
-             std::thread fred(prewittFilter, b.getPixels(), temp, b.getWidth(), start_row, end_row + 2);
-             threadVector.push_back(std::move(fred));
-           }
-                    
-        }
-                
-        for (std::thread& temp : threadVector)
-        {
-        temp.join();
-        }
-        cppAlgoTimer.stop();
-        int cppAlgorithmTime = cppAlgoTimer.getTime();
-        ui.cppTimeLabel->setText(QString::number(cppAlgorithmTime)+"ms");
-                            
+            cppAlgoTimer.start();
+            for (int i = numberOfThreads; i > 0; i--)
+            {
+
+                int start_row = rows_per_thread * (numberOfThreads - i);
+
+                if (i == 1)
+                {
+                    int end_row = rows_per_thread * (numberOfThreads - i + 1) + rows;
+                    std::thread fred(prewittFilter, b.getPixels(), temp, b.getWidth(), start_row, end_row);
+                    threadVector.push_back(std::move(fred));
+                }
+                else
+                {
+                    int end_row = rows_per_thread * (numberOfThreads - i + 1);
+                    std::thread fred(prewittFilter, b.getPixels(), temp, b.getWidth(), start_row, end_row + 2);
+                    threadVector.push_back(std::move(fred));
+                }
+
+            }
+
+            for (std::thread& temp : threadVector)
+            {
+                temp.join();
+            }
+            cppAlgoTimer.stop();
+            int cppAlgorithmTime = cppAlgoTimer.getTime();
+            ui.cppTimeLabel->setText(QString::number(cppAlgorithmTime) + "ms");
+   
         FreeLibrary(hModule);  
     }
     else if(ui.radioButton_asm->isChecked())
@@ -191,38 +189,36 @@ void JAproj::on_startAlgorithmButton_clicked()
             QMessageBox::information(this, tr("ERROR"), "DLL ASM library was not found.");
             return;
         }
+            Timer asmAlgoTimer;
 
-        Timer asmAlgoTimer;
-
-        asmAlgoTimer.start();
-        for (int i = numberOfThreads; i > 0; i--)
-        {
-
-            int start_row = rows_per_thread * (numberOfThreads - i);
-
-            if (i == 1)
+            asmAlgoTimer.start();
+            for (int i = numberOfThreads; i > 0; i--)
             {
-                int end_row = rows_per_thread * (numberOfThreads - i + 1) + rows;
-                std::thread fred(prewittFilter, b.getPixels(),temp, b.getWidth()-2,start_row,end_row-2);
-                threadVector.push_back(std::move(fred));
+
+                int start_row = rows_per_thread * (numberOfThreads - i);
+
+                if (i == 1)
+                {
+                    int end_row = rows_per_thread * (numberOfThreads - i + 1) + rows;
+                    std::thread fred(prewittFilter, b.getPixels(), temp, b.getWidth() - 2, start_row, end_row - 2);
+                    threadVector.push_back(std::move(fred));
+                }
+                else
+                {
+                    int end_row = rows_per_thread * (numberOfThreads - i + 1);
+                    std::thread fred(prewittFilter, b.getPixels(), temp, b.getWidth() - 2, start_row, end_row);
+                    threadVector.push_back(std::move(fred));
+                }
+
             }
-            else
+
+            for (std::thread& temp : threadVector)
             {
-                int end_row = rows_per_thread * (numberOfThreads - i + 1);
-                std::thread fred(prewittFilter, b.getPixels(),temp, b.getWidth() - 2, start_row, end_row);
-                threadVector.push_back(std::move(fred));
+                temp.join();
             }
-
-        }
-
-        for (std::thread& temp : threadVector)
-        {
-            temp.join();
-        }
-        asmAlgoTimer.stop();
-        int cppAlgorithmTime = asmAlgoTimer.getTime();
-        ui.asmAlgorithmTime->setText(QString::number(cppAlgorithmTime) + "ms");
-
+            asmAlgoTimer.stop();
+            int cppAlgorithmTime = asmAlgoTimer.getTime();
+             ui.asmAlgorithmTime->setText(QString::number(cppAlgorithmTime) + "ms");
         FreeLibrary(hModule);
         ifCppDllChosen = false;
     }
@@ -231,4 +227,5 @@ void JAproj::on_startAlgorithmButton_clicked()
     afterHistogram = createLineChart(b.getRDistribution(), b.getGDistribution(), b.getBDistribution(), imageFilePath, false);
     b.saveToFile(imageFilePath,ifCppDllChosen);
     displayHistograms(beforeHistogram, afterHistogram);
+    
 }

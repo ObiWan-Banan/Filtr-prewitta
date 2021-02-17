@@ -53,7 +53,7 @@
     <Import Project="$(QtMsBuild)\qt_defaults.props" />
   </ImportGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>x64\Debug\</OutDir>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
     <IntDir>release\</IntDir>
     <TargetName>JAproj</TargetName>
     <IgnoreImportLibrary>true</IgnoreImportLibrary>
